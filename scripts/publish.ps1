@@ -4,7 +4,8 @@ param(
     [string]$Old = 'xi029/jev-lens',
     [string]$New = 'nocap'
 )
-$ErrorActionPreference = 'Stop'
+# Native commands report failure through $LASTEXITCODE, checked after each step.
+$ErrorActionPreference = 'Continue'
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
     throw 'Install GitHub CLI from https://cli.github.com, then run gh auth login and this script again.'
