@@ -1,0 +1,69 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1400"
+  height="430"
+  viewBox="0 0 1400 430"
+  role="img"
+  aria-label="NoCap as an MCP server: Claude Code, Cursor, Codex and other MCP clients call check_evidence before answering from search results, and follow the returned next step."
+>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#6f8a78" />
+    </marker>
+  </defs>
+  <rect width="1400" height="430" rx="20" fill="#0f1512" />
+  <rect x=".5" y=".5" width="1399" height="429" rx="20" fill="none" stroke="#2f4236" />
+  <g font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif">
+    <text x="56" y="62" fill="#8ae4b6" font-size="13" font-weight="700" letter-spacing="3">
+      MCP SERVER
+    </text>
+    <text x="56" y="98" fill="#e8eee9" font-size="28" font-weight="700" letter-spacing="-.5">
+      Make your coding agent show its receipts
+    </text>
+
+    <g transform="translate(56,136)" font-size="16" fill="#e8eee9">
+      <rect width="250" height="52" rx="12" fill="#141d18" stroke="#36503f" />
+      <text x="24" y="32">Claude Code</text>
+      <rect y="64" width="250" height="52" rx="12" fill="#141d18" stroke="#36503f" />
+      <text x="24" y="96">Cursor</text>
+      <rect y="128" width="250" height="52" rx="12" fill="#141d18" stroke="#36503f" />
+      <text x="24" y="160">Codex · OpenCode</text>
+      <rect y="192" width="250" height="52" rx="12" fill="#141d18" stroke="#36503f" />
+      <text x="24" y="224">Any MCP client</text>
+    </g>
+    <g stroke="#6f8a78" stroke-width="2" fill="none" marker-end="url(#a)">
+      <path d="M318 162C360 162 360 258 408 258" />
+      <path d="M318 226C360 226 360 258 408 258" />
+      <path d="M318 290C360 290 360 258 408 258" />
+      <path d="M318 354C360 354 360 258 408 258" />
+    </g>
+
+    <g transform="translate(420,136)">
+      <rect width="430" height="244" rx="16" fill="#15231c" stroke="#8ae4b6" stroke-width="1.6" />
+      <text x="26" y="40" fill="#8ae4b6" font-size="12" font-weight="700" letter-spacing="2">
+        nocap mcp · TOOLS
+      </text>
+      <g font-family="SFMono-Regular,Consolas,Menlo,monospace" font-size="15">
+        <text x="26" y="84" fill="#e8eee9">check_evidence<tspan fill="#a9b8ad">(question, evidence)</tspan></text>
+        <text x="26" y="124" fill="#e8eee9">ask_knowledge_base<tspan fill="#a9b8ad">(question)</tspan></text>
+        <text x="26" y="164" fill="#e8eee9">add_document<tspan fill="#a9b8ad">(name, text)</tspan></text>
+        <text x="26" y="204" fill="#e8eee9">replay_decision<tspan fill="#a9b8ad">(trace_id, …)</tspan></text>
+      </g>
+    </g>
+    <path d="M862 258H930" stroke="#6f8a78" stroke-width="2" marker-end="url(#a)" />
+
+    <g transform="translate(942,136)">
+      <rect width="402" height="244" rx="16" fill="#141d18" stroke="#36503f" />
+      <g font-family="SFMono-Regular,Consolas,Menlo,monospace" font-size="14">
+        <text x="24" y="42" fill="#a9b8ad">{</text>
+        <text x="40" y="70" fill="#a2bcf0">"action"<tspan fill="#a9b8ad">: </tspan><tspan fill="#ed9a99">"abstain"</tspan>,</text>
+        <text x="40" y="98" fill="#a2bcf0">"next_step"<tspan fill="#a9b8ad">:</tspan></text>
+        <text x="56" y="124" fill="#f2c477">"Tell the user the sources</text>
+        <text x="56" y="148" fill="#f2c477"> do not contain the answer.</text>
+        <text x="56" y="172" fill="#f2c477"> Do not guess."</text>
+        <text x="40" y="200" fill="#a2bcf0">"trace_id"<tspan fill="#a9b8ad">: </tspan><tspan fill="#8ae4b6">"be72…"</tspan></text>
+        <text x="24" y="226" fill="#a9b8ad">}</text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -8,12 +8,12 @@ import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-from jevlens.config import Settings
-from jevlens.engine import run_query
-from jevlens.models import Query
-from jevlens.providers import ProviderError
-from jevlens.samples import CONFLICT_DOCUMENT, DOCUMENTS
-from jevlens.store import Store
+from nocap.config import Settings
+from nocap.engine import run_query
+from nocap.models import Query
+from nocap.providers import ProviderError
+from nocap.samples import CONFLICT_DOCUMENT, DOCUMENTS
+from nocap.store import Store
 
 CASES = [
     ("refund", "How do I request a refund?", "answer", False),
@@ -31,7 +31,7 @@ async def evaluate(args):
     settings = Settings(timeout_seconds=args.timeout)
     rows = []
     # Keep evaluation documents separate from the user's workspace.
-    with tempfile.TemporaryDirectory(prefix="jevlens-eval-", dir=".cache") as directory:
+    with tempfile.TemporaryDirectory(prefix="nocap-eval-", dir=".cache") as directory:
         store = Store(Path(directory))
         for name, text in DOCUMENTS.items():
             store.add_document(name, text)
@@ -98,7 +98,9 @@ async def evaluate(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--provider", choices=["demo", "ollama", "laya", "jev"], default="demo")
+    parser.add_argument(
+        "--provider", choices=["demo", "ollama", "openai", "laya", "jev"], default="demo"
+    )
     parser.add_argument("--output", type=Path, default=Path("artifacts/evaluation.json"))
     parser.add_argument("--timeout", type=float, default=120)
     args = parser.parse_args()

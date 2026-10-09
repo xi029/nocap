@@ -4,9 +4,9 @@ import json
 import httpx
 import pytest
 
-from jevlens.config import Settings
-from jevlens.models import Evidence
-from jevlens.providers import ProviderError, evaluate
+from nocap.config import Settings
+from nocap.models import Evidence
+from nocap.providers import ProviderError, evaluate
 
 
 @pytest.mark.parametrize("fence", [False, True])
@@ -24,7 +24,7 @@ def test_ollama_retains_and_normalizes_self_reported_weights(monkeypatch, fence)
         return httpx.Response(200, json={"message": {"content": content}})
 
     monkeypatch.setattr(
-        "jevlens.providers.httpx.AsyncClient",
+        "nocap.providers.httpx.AsyncClient",
         lambda **kwargs: original(transport=httpx.MockTransport(handle), **kwargs),
     )
     evidence = [
@@ -42,7 +42,7 @@ def test_prose_around_json_is_not_accepted(monkeypatch):
     original = httpx.AsyncClient
     response = {"message": {"content": 'Here is your result: {"probabilities":{}}'}}
     monkeypatch.setattr(
-        "jevlens.providers.httpx.AsyncClient",
+        "nocap.providers.httpx.AsyncClient",
         lambda **kwargs: original(
             transport=httpx.MockTransport(lambda _: httpx.Response(200, json=response)), **kwargs
         ),
@@ -80,7 +80,7 @@ def test_invalid_decision_has_one_disclosed_repair_attempt(monkeypatch):
         return httpx.Response(200, json={"message": {"content": content}})
 
     monkeypatch.setattr(
-        "jevlens.providers.httpx.AsyncClient",
+        "nocap.providers.httpx.AsyncClient",
         lambda **kwargs: original(transport=httpx.MockTransport(handle), **kwargs),
     )
     evidence = [

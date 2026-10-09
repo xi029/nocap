@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 
-from jevlens.engine import replay
-from jevlens.models import Policy
+from nocap.engine import replay
+from nocap.models import Policy
 
 trace = json.loads(
     (Path(__file__).parents[1] / "docs/examples/local-ollama.trace.json").read_text(

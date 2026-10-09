@@ -3,9 +3,9 @@ import json
 
 import httpx
 
-from jevlens.config import Settings
-from jevlens.models import Evidence
-from jevlens.providers import evaluate
+from nocap.config import Settings
+from nocap.models import Evidence
+from nocap.providers import evaluate
 
 
 def test_laya_balances_all_slots_and_preserves_usage(monkeypatch):
@@ -36,7 +36,7 @@ def test_laya_balances_all_slots_and_preserves_usage(monkeypatch):
         )
 
     monkeypatch.setattr(
-        "jevlens.providers.httpx.AsyncClient",
+        "nocap.providers.httpx.AsyncClient",
         lambda **kwargs: original(transport=httpx.MockTransport(handle), **kwargs),
     )
     evidence = [

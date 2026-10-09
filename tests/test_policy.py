@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from jevlens.models import Decision, Policy, apply_policy
+from nocap.models import Decision, Policy, apply_policy
 
 
 def decision(values):

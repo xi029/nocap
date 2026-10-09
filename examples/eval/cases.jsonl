@@ -1,0 +1,8 @@
+{"id": "refund-steps", "question": "How do I request a refund?", "expect": "answer"}
+{"id": "port", "question": "What port does the service listen on?", "expect": "answer"}
+{"id": "default-db", "question": "What is the default database?", "expect": "answer"}
+{"id": "pricing-gap", "question": "What is the exact team plan pricing?", "expect": "retrieve_more"}
+{"id": "off-topic", "question": "Who won the lunar chess championship?", "expect": "abstain"}
+{"id": "zh-port", "question": "本地部署默认端口是多少？", "expect": "answer"}
+{"id": "conflict-inline", "question": "How many days do I have to request a refund?", "expect": "review_conflict", "evidence": [{"id": "policy-v2", "source": "refund-policy.md", "text": "Customers can request a refund within 30 days of purchase by emailing support with the order ID."}, {"id": "policy-draft", "source": "refund-draft.md", "text": "Customers can request a refund within 14 days of purchase by emailing support with the order ID."}]}
+{"id": "no-evidence", "question": "What is the SLA for enterprise support?", "expect": "abstain", "evidence": []}

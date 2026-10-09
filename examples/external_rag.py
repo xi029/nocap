@@ -1,6 +1,6 @@
-"""Keep your retriever and generator; ask JevLens to gate the retrieved evidence.
+"""Keep your retriever and generator; ask NoCap to gate the retrieved evidence.
 
-Run with a JevLens server listening on localhost:
+Run with a NoCap server listening on localhost:
     uv run python examples/external_rag.py --provider demo
 The bundled retriever and generator use fictional text and verbatim excerpts.
 Replace these two callbacks with your existing application's implementations.
@@ -56,7 +56,9 @@ def generate_excerpts(_question: str, evidence: list[dict]) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--provider", choices=["demo", "ollama", "laya", "jev"], default="demo")
+    parser.add_argument(
+        "--provider", choices=["demo", "ollama", "openai", "laya", "jev"], default="demo"
+    )
     parser.add_argument("--url", default="http://127.0.0.1:8787")
     parser.add_argument("--question", default="How do I request a refund?")
     args = parser.parse_args()
@@ -67,7 +69,7 @@ def main():
     trace = result["trace"]
     print(f"Provider: {trace['decision']['provider']} | {trace['decision']['semantics']}")
     print(f"Route: {trace['action']} | {trace['reason']}")
-    print(f"Saved trace: {trace['id']} | JevLens generator calls: {trace['generator_called']}")
+    print(f"Saved trace: {trace['id']} | NoCap generator calls: {trace['generator_called']}")
     if result["answer"] is not None:
         print("Example generator output (verbatim excerpts):")
         print(result["answer"])

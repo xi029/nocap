@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
-from jevlens.app import create_app
-from jevlens.config import Settings
+from nocap.app import create_app
+from nocap.config import Settings
 
 
 def client(tmp_path):

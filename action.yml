@@ -1,0 +1,39 @@
+name: NoCap RAG gate check
+description: Fail CI when your RAG would answer without evidence. Runs `nocap eval` on labelled route tests.
+author: xi029
+branding:
+  icon: shield
+  color: green
+inputs:
+  cases:
+    description: Path to a .jsonl or .json file of test cases
+    required: true
+  docs:
+    description: File or folder of .md/.txt knowledge documents (optional)
+    default: ""
+  provider:
+    description: demo, ollama, openai, laya or jev
+    default: demo
+  max-leaks:
+    description: Fail when more than this many cases answer without enough evidence
+    default: "0"
+  min-accuracy:
+    description: Fail when the share of matching routes is lower (0-1)
+    default: "0"
+  version:
+    description: NoCap version to install from PyPI (empty = this action's source)
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - shell: bash
+      run: |
+        if [ -n "${{ inputs.version }}" ]; then pip install "nocap==${{ inputs.version }}"; else pip install "${{ github.action_path }}"; fi
+    - shell: bash
+      run: |
+        args=("${{ inputs.cases }}" --provider "${{ inputs.provider }}" --max-leaks "${{ inputs.max-leaks }}" --min-accuracy "${{ inputs.min-accuracy }}" --output nocap-report.json)
+        if [ -n "${{ inputs.docs }}" ]; then args+=(--docs "${{ inputs.docs }}"); fi
+        nocap eval "${args[@]}"

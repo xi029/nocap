@@ -1,56 +1,106 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
   width="1400"
-  height="370"
-  viewBox="0 0 1400 370"
+  height="560"
+  viewBox="0 0 1400 560"
   role="img"
-  aria-label="Local documents flow through retrieval, typed decisions and a deterministic gate. Accepted evidence reaches the generator. Saved traces support replay without inference."
+  aria-label="How NoCap works: any retriever sends excerpts to the NoCap gate, which judges supported, partial, missing or conflicting evidence and routes to answer, retrieve_more, abstain or review_conflict. Every decision is saved and can be replayed with zero model calls."
 >
-  <rect width="1400" height="370" rx="16" fill="#131a16" />
-  <g font-family="Inter,Segoe UI,Arial,sans-serif">
-    <text x="42" y="42" fill="#a1b0a5" font-size="12" letter-spacing="3">
-      THE WORKFLOW / NO HIDDEN MODEL FALLBACKS
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#6f8a78" />
+    </marker>
+  </defs>
+  <rect width="1400" height="560" rx="20" fill="#0f1512" />
+  <rect x=".5" y=".5" width="1399" height="559" rx="20" fill="none" stroke="#2f4236" />
+  <g font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif">
+    <text x="56" y="62" fill="#8ae4b6" font-size="13" font-weight="700" letter-spacing="3">
+      HOW IT WORKS
     </text>
-    <g fill="#202c24" stroke="#4c6554">
-      <rect x="42" y="93" width="206" height="108" rx="9" />
-      <rect x="305" y="93" width="210" height="108" rx="9" />
-      <rect x="575" y="93" width="260" height="108" rx="9" />
-      <rect x="895" y="93" width="184" height="108" rx="9" />
-      <rect x="1140" y="93" width="218" height="108" rx="9" />
-    </g>
-    <g fill="#e8eee9" font-size="19">
-      <text x="63" y="128">Your documents</text>
-      <text x="327" y="128">Retrieve</text>
-      <text x="597" y="128">Decide</text>
-      <text x="917" y="128">Gate</text>
-      <text x="1162" y="128">Respond</text>
-    </g>
-    <g fill="#a1b0a5" font-size="12">
-      <text x="63" y="157">Markdown / text</text>
-      <text x="63" y="178">Local SQLite workspace</text>
-      <text x="327" y="157">BM25 + Chinese bigrams</text>
-      <text x="327" y="178">Visible, bounded excerpts</text>
-      <text x="597" y="157">Laya · Jev · Ollama</text>
-      <text x="597" y="178">4 outcomes + distribution</text>
-      <text x="917" y="157">Your thresholds</text>
-      <text x="917" y="178">Deterministic policy</text>
-      <text x="1162" y="157">Excerpts or Ollama</text>
-      <text x="1162" y="178">Validated citation IDs</text>
-    </g>
-    <g stroke="#8ae4b6" stroke-width="2" fill="none">
-      <path
-        d="M252 147h43m-7-5 7 5-7 5M520 147h45m-7-5 7 5-7 5M839 147h46m-7-5 7 5-7 5M1083 147h47m-7-5 7 5-7 5M987 206v32h-280"
-      />
-    </g>
-    <text x="1088" y="83" fill="#8ae4b6" font-size="10">ANSWER ONLY</text>
-    <rect x="42" y="264" width="1316" height="64" rx="8" fill="#1b2820" stroke="#3b5846" />
-    <text x="65" y="303" fill="#8ae4b6" font-size="16">Inspect + replay</text>
-    <text x="272" y="302" fill="#bacdc0" font-size="13">
-      Exact input · Source IDs · Probability semantics · Timing · JSON export · New thresholds, zero
-      inference
+    <text x="56" y="98" fill="#e8eee9" font-size="28" font-weight="700" letter-spacing="-.5">
+      A gate between retrieval and generation
     </text>
-    <text x="609" y="242" fill="#f2c477" font-size="11">
-      RETRIEVE MORE / ABSTAIN / REVIEW CONFLICT → NO GENERATION
+
+    <g transform="translate(56,150)">
+      <rect width="250" height="270" rx="14" fill="#141d18" stroke="#36503f" />
+      <text x="24" y="40" fill="#a9b8ad" font-size="12" font-weight="700" letter-spacing="2">
+        1 · ANY RETRIEVER
+      </text>
+      <g font-size="15" fill="#e8eee9">
+        <rect x="24" y="62" width="202" height="38" rx="10" fill="#1d2822" />
+        <text x="42" y="87">Vector DB / RAG</text>
+        <rect x="24" y="110" width="202" height="38" rx="10" fill="#1d2822" />
+        <text x="42" y="135">Web / code search</text>
+        <rect x="24" y="158" width="202" height="38" rx="10" fill="#1d2822" />
+        <text x="42" y="183">Agent tool output</text>
+        <rect x="24" y="206" width="202" height="38" rx="10" fill="#1d2822" />
+        <text x="42" y="231">Built-in BM25</text>
+      </g>
+    </g>
+    <path d="M318 285H388" stroke="#6f8a78" stroke-width="2" marker-end="url(#arrow)" />
+    <text x="322" y="272" fill="#a9b8ad" font-size="12">excerpts</text>
+
+    <g transform="translate(400,130)">
+      <rect width="400" height="310" rx="18" fill="#15231c" stroke="#8ae4b6" stroke-width="1.6" />
+      <text x="28" y="42" fill="#8ae4b6" font-size="12" font-weight="700" letter-spacing="2">
+        2 · NOCAP GATE
+      </text>
+      <text x="28" y="76" fill="#e8eee9" font-size="17" font-weight="600">
+        Do these excerpts answer the question?
+      </text>
+      <g font-size="14">
+        <text x="28" y="118" fill="#a9b8ad">supported</text>
+        <rect x="140" y="107" width="200" height="10" rx="5" fill="#26362c" />
+        <rect x="140" y="107" width="172" height="10" rx="5" fill="#8ae4b6" />
+        <text x="352" y="118" fill="#e8eee9">.86</text>
+        <text x="28" y="150" fill="#a9b8ad">partial</text>
+        <rect x="140" y="139" width="200" height="10" rx="5" fill="#26362c" />
+        <rect x="140" y="139" width="20" height="10" rx="5" fill="#a2bcf0" />
+        <text x="352" y="150" fill="#e8eee9">.10</text>
+        <text x="28" y="182" fill="#a9b8ad">missing</text>
+        <rect x="140" y="171" width="200" height="10" rx="5" fill="#26362c" />
+        <rect x="140" y="171" width="6" height="10" rx="5" fill="#ed9a99" />
+        <text x="352" y="182" fill="#e8eee9">.02</text>
+        <text x="28" y="214" fill="#a9b8ad">conflicting</text>
+        <rect x="140" y="203" width="200" height="10" rx="5" fill="#26362c" />
+        <rect x="140" y="203" width="6" height="10" rx="5" fill="#f2c477" />
+        <text x="352" y="214" fill="#e8eee9">.02</text>
+      </g>
+      <path d="M28 240H372" stroke="#2f4236" />
+      <text x="28" y="268" fill="#a9b8ad" font-size="13">Judge: Ollama · any OpenAI-compatible API · Laya · Jev</text>
+      <text x="28" y="292" fill="#a9b8ad" font-size="13">Policy: support ≥ 70% · conflict ≥ 35% (yours to tune)</text>
+    </g>
+
+    <g stroke="#6f8a78" stroke-width="2" fill="none" marker-end="url(#arrow)">
+      <path d="M812 285C850 285 850 172 900 172" />
+      <path d="M812 285C860 285 860 252 900 252" />
+      <path d="M812 285C860 285 860 332 900 332" />
+      <path d="M812 285C850 285 850 412 900 412" />
+    </g>
+    <text x="910" y="126" fill="#a9b8ad" font-size="12" font-weight="700" letter-spacing="2">
+      3 · ROUTE
     </text>
+    <g transform="translate(910,142)" font-size="15">
+      <rect width="434" height="60" rx="12" fill="#152a20" stroke="#8ae4b6" />
+      <text x="22" y="27" fill="#8ae4b6" font-weight="700" font-family="SFMono-Regular,Consolas,Menlo,monospace">answer</text>
+      <text x="22" y="47" fill="#c9d8cd" font-size="13">Your LLM generates from the judged excerpts only</text>
+      <rect y="80" width="434" height="60" rx="12" fill="#161f2b" stroke="#a2bcf0" />
+      <text x="22" y="107" fill="#a2bcf0" font-weight="700" font-family="SFMono-Regular,Consolas,Menlo,monospace">retrieve_more</text>
+      <text x="22" y="127" fill="#c9d8cd" font-size="13">Search again or ask a clarifying question · LLM skipped</text>
+      <rect y="160" width="434" height="60" rx="12" fill="#2a1b1d" stroke="#ed9a99" />
+      <text x="22" y="187" fill="#ed9a99" font-weight="700" font-family="SFMono-Regular,Consolas,Menlo,monospace">abstain</text>
+      <text x="22" y="207" fill="#c9d8cd" font-size="13">Say “I don’t know” honestly · LLM skipped</text>
+      <rect y="240" width="434" height="60" rx="12" fill="#2a2416" stroke="#f2c477" />
+      <text x="22" y="267" fill="#f2c477" font-weight="700" font-family="SFMono-Regular,Consolas,Menlo,monospace">review_conflict</text>
+      <text x="22" y="287" fill="#c9d8cd" font-size="13">Sources disagree → a human or your source-of-truth rules</text>
+    </g>
+
+    <g transform="translate(400,474)">
+      <rect width="944" height="50" rx="12" fill="#141d18" stroke="#36503f" stroke-dasharray="5 5" />
+      <text x="24" y="31" fill="#e8eee9" font-size="15">
+        <tspan fill="#8ae4b6" font-weight="700">↺ Replay</tspan>  Every decision is saved as a trace. Change the thresholds and re-route it with
+        <tspan fill="#8ae4b6" font-weight="700">0 model calls</tspan>.
+      </text>
+    </g>
   </g>
 </svg>

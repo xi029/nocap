@@ -16,11 +16,11 @@ def main():
             raise SystemExit(f"Refusing to package a private or runtime path: {file}")
         if file.stat().st_size > 5_000_000:
             raise SystemExit(f"Review unexpectedly large file before release: {file}")
-    output = Path("dist/jev-lens-source.zip")
+    output = Path("dist/nocap-source.zip")
     output.parent.mkdir(exist_ok=True)
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
         for file in files:
-            archive.write(file, "jev-lens/" + file.as_posix())
+            archive.write(file, "nocap/" + file.as_posix())
     print(f"Built {output}: {len(files)} tracked files, {output.stat().st_size:,} bytes.")
 
 

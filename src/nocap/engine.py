@@ -22,10 +22,12 @@ async def run_query(
     generation_error = None
     generator_called = False
     if action == "answer":
-        if query.generator == "ollama":
+        if query.generator in {"ollama", "openai"}:
             generator_called = True
             try:
-                claims = (await generate(settings, query.question, evidence)).claims
+                claims = (
+                    await generate(settings, query.question, evidence, query.generator)
+                ).claims
             except ProviderError as exc:
                 generation_error = str(exc)
         elif query.generator == "extractive":
@@ -35,7 +37,7 @@ async def run_query(
     warnings = []
     if decision.usage.get("validation_retries"):
         warnings.append(
-            "Ollama's first decision output was invalid. One schema-repair retry "
+            "The first LLM decision output was invalid. One schema-repair retry "
             "was made with the same model; the valid response is shown."
         )
     if decision.usage.get("truncated") or decision.usage.get("state_tokens_dropped", 0):
@@ -54,7 +56,7 @@ async def run_query(
             "Laya label order and checkpoint token limits can affect results. "
             "Inspect the input, configure max_len, and validate your question schema."
         )
-    if query.generator == "ollama" and claims:
+    if query.generator in {"ollama", "openai"} and claims:
         warnings.append(
             "Citation IDs are validated. Semantic support of generated claims is not verified."
         )

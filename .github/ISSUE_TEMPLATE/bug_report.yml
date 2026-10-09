@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible JevLens problem
+description: Report a reproducible NoCap problem
 body:
   - type: textarea
     id: problem
@@ -12,7 +12,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      placeholder: OS, Python, JevLens version, provider, checkpoint
+      placeholder: OS, Python, NoCap version, provider, checkpoint
     validations:
       required: true
   - type: textarea

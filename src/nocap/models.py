@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-Provider = Literal["demo", "ollama", "laya", "jev"]
+Provider = Literal["demo", "ollama", "openai", "laya", "jev"]
 Action = Literal["answer", "retrieve_more", "abstain", "review_conflict"]
 LABELS = ("supported", "partial", "missing", "conflicting")
 
@@ -28,7 +28,7 @@ class QuestionInput(BaseModel):
 
 
 class Query(QuestionInput):
-    generator: Literal["extractive", "ollama", "none"] = "extractive"
+    generator: Literal["extractive", "ollama", "openai", "none"] = "extractive"
     top_k: int = Field(default=4, ge=1, le=8)
 
 

@@ -102,6 +102,8 @@ async function refreshHistory() {
 }
 function render(trace) {
   activeTrace = trace;
+  // A permalink to this decision in the local workbench.
+  history.replaceState(null, "", "#trace=" + trace.id);
   replaySequence++;
   $("support").value = Math.round(trace.policy.support_threshold * 100);
   $("conflict").value = Math.round(trace.policy.conflict_threshold * 100);
@@ -200,7 +202,7 @@ function render(trace) {
     $("answer").append(block);
   }
   $("generation-badge").textContent = trace.generator_called
-    ? "OLLAMA CALLED"
+    ? `${trace.generator.toUpperCase()} CALLED`
     : trace.generator === "none"
       ? "DECISION ONLY"
       : trace.action === "answer"
@@ -215,7 +217,7 @@ function render(trace) {
   $("step-decide").textContent = trace.decision.provider;
   $("step-gate").textContent = trace.action.replaceAll("_", " ");
   $("step-respond").textContent = trace.generator_called
-    ? "Ollama"
+    ? trace.generator
     : trace.claims.length
       ? "Evidence excerpts"
       : "Skipped";
@@ -235,11 +237,13 @@ function modeNote() {
   const notes = {
     demo: "Demo uses a lexical simulation. Its scores are illustrative, not AI probabilities.",
     ollama: "Local Ollama estimates support. Its self-reported probabilities are uncalibrated.",
+    openai:
+      "Any OpenAI-compatible API (OpenAI, DeepSeek, vLLM, LM Studio…). Self-reported estimates are uncalibrated.",
     laya: "Uses your self-hosted Laya /v1/systemone server. Validate the checkpoint, token budget and thresholds.",
     jev: "Hosted Jev receives the question and retrieved excerpts. Configure your server-side API key first.",
   };
   $("mode-note").textContent = notes[provider];
-  $("provider-badge").textContent = provider === "demo" ? "LEXICAL DEMO" : provider.toUpperCase();
+  $("provider-badge").textContent = provider === "demo" ? "LEXICAL DEMO" : provider === "openai" ? "OPENAI-COMPATIBLE" : provider.toUpperCase();
 }
 function scheduleReplay() {
   updateSliderLabels();
@@ -353,6 +357,8 @@ async function init() {
       $("scenarios").append(button);
     });
     await Promise.all([refreshDocuments(), refreshHistory()]);
+    const linked = /^#trace=([0-9a-f]{32})$/.exec(location.hash);
+    if (linked) render(await api(`/api/traces/${linked[1]}`));
   } catch (e) {
     notice(e.message);
   }

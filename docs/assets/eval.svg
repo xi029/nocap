@@ -1,0 +1,31 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1000"
+  height="400"
+  viewBox="0 0 1000 400"
+  role="img"
+  aria-label="Terminal output of nocap eval on the bundled example cases with the demo provider: 6 of 8 routes matched, 0 leaks, 2 over-refusals."
+>
+  <rect width="1000" height="400" rx="14" fill="#0c110e" />
+  <rect x=".5" y=".5" width="999" height="399" rx="14" fill="none" stroke="#2f4236" />
+  <path d="M0 14a14 14 0 0 1 14-14h972a14 14 0 0 1 14 14v26H0z" fill="#161f1a" />
+  <circle cx="24" cy="20" r="6" fill="#ed9a99" />
+  <circle cx="44" cy="20" r="6" fill="#f2c477" />
+  <circle cx="64" cy="20" r="6" fill="#8ae4b6" />
+  <g font-family="SFMono-Regular,Consolas,Menlo,monospace" font-size="15">
+    <text x="500" y="25" fill="#7e9184" font-size="12" text-anchor="middle">nocap eval · demo provider · real output</text>
+    <text x="28" y="76" fill="#8ae4b6">$ <tspan fill="#e8eee9">nocap eval examples/eval/cases.jsonl --samples --max-leaks 0</tspan></text>
+    <g fill="#c9d8cd">
+      <text x="28" y="114"><tspan fill="#8ae4b6" font-weight="700">PASS</tspan><tspan x="92">refund-steps</tspan><tspan x="262">answer</tspan></text>
+      <text x="28" y="140"><tspan fill="#f2c477" font-weight="700">FAIL</tspan><tspan x="92">port</tspan><tspan x="262">expected answer, got retrieve_more</tspan></text>
+      <text x="28" y="166"><tspan fill="#8ae4b6" font-weight="700">PASS</tspan><tspan x="92">default-db</tspan><tspan x="262">answer</tspan></text>
+      <text x="28" y="192"><tspan fill="#8ae4b6" font-weight="700">PASS</tspan><tspan x="92">pricing-gap</tspan><tspan x="262">retrieve_more</tspan></text>
+      <text x="28" y="218"><tspan fill="#8ae4b6" font-weight="700">PASS</tspan><tspan x="92">off-topic</tspan><tspan x="262">abstain</tspan></text>
+      <text x="28" y="244"><tspan fill="#f2c477" font-weight="700">FAIL</tspan><tspan x="92">zh-port</tspan><tspan x="262">expected answer, got retrieve_more</tspan></text>
+      <text x="28" y="270"><tspan fill="#8ae4b6" font-weight="700">PASS</tspan><tspan x="92">conflict-inline</tspan><tspan x="262">review_conflict</tspan></text>
+      <text x="28" y="296"><tspan fill="#8ae4b6" font-weight="700">PASS</tspan><tspan x="92">no-evidence</tspan><tspan x="262">abstain</tspan></text>
+    </g>
+    <text x="28" y="340" fill="#e8eee9">6/8 routes matched (75%) | <tspan fill="#8ae4b6" font-weight="700">0 leaks</tspan> | 2 over-refusals | 0 errors</text>
+    <text x="28" y="372" fill="#7e9184">exit 0 · LEAK = answered when it should not have. CI fails on leaks.</text>
+  </g>
+</svg>

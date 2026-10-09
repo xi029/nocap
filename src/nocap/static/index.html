@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="JevLens — a local evidence workbench. Decide before you generate with Laya, Jev and Ollama."
+      content="NoCap — the hallucination firewall for RAG and AI agents. No evidence, no answer."
     />
-    <title>JevLens · Evidence before answers</title>
-    <link rel="icon" href="/static/lens.svg" type="image/svg+xml" />
+    <title>NoCap · No evidence, no answer</title>
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/static/style.css" />
     <script src="/static/app.js" defer></script>
   </head>
   <body>
     <a class="skip" href="#question">Skip to question</a>
     <aside class="sidebar">
-      <a class="brand" href="/" aria-label="JevLens home"
-        ><img src="/static/lens.svg" alt="" width="34" height="34" />Jev<span>Lens</span></a
+      <a class="brand" href="/" aria-label="NoCap home"
+        ><img src="/static/logo.svg" alt="" width="34" height="34" />No<span>Cap</span></a
       >
       <div class="workspace-label">LOCAL WORKSPACE <span class="status-dot"></span></div>
       <div class="nav-item active">
@@ -37,7 +37,7 @@
       </div>
       <div class="sidebar-footer">
         <span class="status-dot"></span> Stored on your machine
-        <a href="https://github.com/xi029/jev-lens" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a href="https://github.com/xi029/nocap" target="_blank" rel="noreferrer">GitHub ↗</a>
       </div>
     </aside>
     <main>
@@ -45,13 +45,13 @@
         <div>
           <span class="breadcrumb">Workspace</span><span class="slash">/</span> Evidence studio
         </div>
-        <span class="version">OPEN SOURCE <span id="version">v0.1.0</span></span>
+        <span class="version">OPEN SOURCE <span id="version">v0.2.0</span></span>
       </header>
       <section class="intro">
-        <div class="eyebrow"><span></span> DECISION-FIRST RAG</div>
-        <h1>Evidence before <span>answers.</span></h1>
-        <p>See what your model knows. Decide when it should speak.</p>
-        <div class="intro-badge">Laya · Jev · Ollama <span>One inspectable workflow</span></div>
+        <div class="eyebrow"><span></span> HALLUCINATION FIREWALL FOR RAG &amp; AGENTS</div>
+        <h1>No evidence, <span>no answer.</span></h1>
+        <p>Judge retrieved evidence before your model speaks. Answer, dig deeper, flag conflicts, or say “I don't know”.</p>
+        <div class="intro-badge">Ollama · OpenAI-compatible · Laya · Jev <span>One inspectable gate</span></div>
       </section>
       <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
       <section class="query-panel panel">
@@ -76,6 +76,7 @@ How do I request a refund?</textarea
               ><select id="provider">
                 <option value="demo">Demo simulation</option>
                 <option value="ollama">Ollama · local</option>
+                <option value="openai">OpenAI-compatible</option>
                 <option value="laya">Laya · open weights</option>
                 <option value="jev">Jev · hosted</option>
               </select>
@@ -86,6 +87,7 @@ How do I request a refund?</textarea
                 <option value="extractive">Evidence excerpts</option>
                 <option value="none">Decision only</option>
                 <option value="ollama">Ollama · generate</option>
+                <option value="openai">OpenAI-compatible · generate</option>
               </select>
             </div>
             <button id="run" class="primary" type="submit">Inspect evidence <span>↗</span></button>
@@ -193,7 +195,7 @@ How do I request a refund?</textarea
         <pre id="trace-json"></pre>
       </details>
       <footer class="main-footer">
-        <span>JevLens <span class="muted">/ Decide before you generate.</span></span
+        <span>NoCap <span class="muted">/ No evidence, no answer.</span></span
         ><span class="muted">Independent project · Apache-2.0</span>
       </footer>
     </main>

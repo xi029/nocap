@@ -1,41 +1,67 @@
-# Repository launch kit
+# Launch kit
 
-Suggested repository: **`xi029/jev-lens`**. Project name: **JevLens**.
+Maintainer checklist and drafts. Nothing here has been posted anywhere.
 
-Description:
+## 1. Repository
 
-> Decide before you generate. Local evidence gates, threshold replay and inspectable RAG traces for Laya, Jev and Ollama.
+- Rename `xi029/jev-lens` → **`xi029/nocap`** with `./scripts/publish.ps1`. GitHub keeps redirects from the old URL. The script also sets the description, homepage and topics.
+- Description: `No evidence, no answer. 🧢 The hallucination firewall for RAG & AI agents: MCP server, Python SDK, OpenAI-compatible / Ollama judges, CI route tests.`
+- Topics: `rag` `hallucination` `llm` `mcp` `mcp-server` `ai-agents` `guardrails` `ollama` `openai` `deepseek` `langchain` `llamaindex` `claude-code` `local-first` `python` `evaluation`
+- Social preview: upload `docs/assets/social-preview.png` (1280×640) in **Settings → General → Social preview**.
+- Pin the repository on your profile.
 
-Suggested GitHub topics:
+## 2. Package and release
 
-`jev`, `laya`, `rag`, `ollama`, `local-ai`, `decision-models`, `system-one`, `explainable-ai`, `python`, `fastapi`, `qwen`
+`pip install nocap`, `uvx --from "nocap[mcp]"` and the README's PyPI badge only work after the package is on PyPI. The name `nocap` was free on 2026-10-09.
 
-Use `docs/assets/hero.svg` as a starting point for a social preview; GitHub's social preview upload requires a raster image. The actual UI screenshot is `docs/assets/studio.jpg`.
+```sh
+uv build
+uv publish            # needs a PyPI token: UV_PUBLISH_TOKEN=pypi-...
+git tag v0.2.0 && git push origin v0.2.0
+gh release create v0.2.0 --title "NoCap 0.2 — no evidence, no answer" --notes-file docs/launch-release.md
+```
 
-## Release v0.1.0 draft
+The tag makes `uses: xi029/nocap@v0.2.0` work. To list the Action on the GitHub Marketplace, tick "Publish this Action to the GitHub Marketplace" when you create the release.
 
-JevLens puts an inspectable decision layer between retrieval and generation. The local workbench supports Laya, hosted Jev, and Ollama; shows exact provider excerpts; gates generation; exports traces; and replays thresholds without new inference. An external evidence API lets existing RAG projects keep their retriever and generator.
+Also consider submitting the MCP server to the [official MCP registry](https://github.com/modelcontextprotocol/registry) and awesome lists (`awesome-mcp-servers`, `awesome-rag`, `awesome-llm-apps`, `awesome-local-ai`).
 
-Included: an account-free demo, original fictional knowledge samples, CLI and JSON API, Windows/Linux CI, Apache-2.0 licensing, and English/Chinese documentation.
+## 3. Demo asset
 
-Scope: Markdown/text, lexical retrieval, a local single-user workspace. LLM scores are uncalibrated and generated citations are checked for valid IDs only. The fixture is a smoke test, not a competitive benchmark.
+A 20-second GIF/MP4 usually beats any screenshot. Suggested shot list:
 
-## Demo outline
+1. `nocap demo && nocap serve`, then ask "How do I request a refund?" → **answer**.
+2. Drag **Minimum support** to 95% → route flips, "0 model calls".
+3. **Add conflicting policy** → ask again → **review_conflict** with 30 vs 14 days.
+4. Cut to Claude Code calling `check_evidence` and replying "the sources don't say".
 
-Show one supported refund question. Raise the support threshold and show the new replay route without changing the original response. Add the conflicting refund draft and show why generation is skipped. Finish by exporting the inspectable trace and switching to your local model.
+## 4. Announcement drafts
 
-## Optional announcement draft
+**X / Bluesky**
 
-I built JevLens, an open-source evidence workbench for Laya, Jev and Ollama. It asks whether your retrieved docs actually support an answer before calling the generator. The part I wanted most: move a threshold on a saved judgment and replay the route with zero model calls. It runs locally, includes an account-free demo, and exports the evidence and decision as JSON.
+> Your RAG is capping. 🧢
+>
+> I built NoCap: a gate that asks "do these chunks actually answer the question?" *before* your LLM speaks, then routes to answer / retrieve more / abstain / flag conflict.
+>
+> - 3-line Python SDK
+> - MCP server for Claude Code & Cursor
+> - any OpenAI-compatible or Ollama model as the judge
+> - `nocap eval` fails CI on hallucination leaks
+>
+> Local-first, Apache-2.0: github.com/xi029/nocap
 
-Try it: https://github.com/xi029/jev-lens
+**Show HN**: *Show HN: NoCap – decide whether retrieved evidence supports an answer before generating*
 
-No claims about beating another model or eliminating hallucinations. Model errors and score semantics remain visible.
+> NoCap sits between retrieval and generation. It asks a judge model (Ollama, any OpenAI-compatible API, or a decision model such as Laya) for a four-way distribution (supported / partial / missing / conflicting), applies your thresholds, and only lets the generator run on "answer". Each decision is saved, so you can replay a stricter threshold with no model calls and see what would have been blocked. There's an MCP server so coding agents can call it, and `nocap eval` for route regression tests in CI. LLM judges are uncalibrated and we don't claim accuracy numbers; the traces show exactly what was judged so you can check.
 
-This is a draft for the maintainer. It has not been posted anywhere.
+**r/LocalLLaMA**: lead with Ollama + `qwen3.5:4b` running fully offline, and include the screenshot of the real local run.
 
-## Publish from this workspace
+**V2EX / 掘金 / 知乎（中文）**
 
-After installing [GitHub CLI](https://cli.github.com/) and authenticating with `gh auth login`, run `./scripts/publish.ps1` in PowerShell. It checks the signed-in account, requires a clean commit, refuses to overwrite an existing repository, creates `xi029/jev-lens` as public, pushes the current source and adds discovery topics.
+> 做 RAG 最怕的不是检索不到，而是检索到“沾边”的内容后模型开始一本正经地编。
+> 我做了个开源小工具 **NoCap**（No cap = 不吹牛）：在大模型生成之前，先让裁判模型判断证据是“支持 / 部分 / 缺失 / 冲突”，再按你设的阈值决定回答、继续检索、拒答或提示冲突。
+> 支持 Ollama、DeepSeek、通义千问等任意 OpenAI 兼容接口；有 Python SDK（3 行接入）、MCP Server（Claude Code / Cursor 直接用），还能用 `nocap eval` 在 CI 里给“幻觉”写单元测试。
+> 本地优先，Apache-2.0：github.com/xi029/nocap
 
-`python scripts/prepare_release.py` produces a ZIP from tracked files only. It rejects local data, caches, `.env` and unexpectedly large files. This is suitable for manual upload or sharing the source before GitHub authentication is configured.
+## 5. Honesty rules for every post
+
+No invented accuracy, speed, token-savings or "hallucination reduced by X%" numbers. The bundled fixture is a smoke test. LLM judge scores are uncalibrated. Say so; it builds more trust than a benchmark you can't defend.

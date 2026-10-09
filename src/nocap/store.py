@@ -12,7 +12,10 @@ class Store:
 
     def __init__(self, directory: Path):
         directory.mkdir(parents=True, exist_ok=True)
-        self.path = directory / "jevlens.sqlite3"
+        self.path = directory / "nocap.sqlite3"
+        legacy = directory / "jevlens.sqlite3"  # Workspaces created before the rename.
+        if legacy.exists() and not self.path.exists():
+            legacy.rename(self.path)
         with self.connect() as db:
             db.execute(
                 "CREATE TABLE IF NOT EXISTS documents (id TEXT PRIMARY KEY, name TEXT, text TEXT)"

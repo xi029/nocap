@@ -1,62 +1,105 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
   width="1400"
-  height="440"
-  viewBox="0 0 1400 440"
+  height="520"
+  viewBox="0 0 1400 520"
   role="img"
-  aria-label="JevLens: decide before you generate. Local evidence decisions for Laya, Jev and Ollama."
+  aria-label="NoCap: no evidence, no answer. The hallucination firewall for RAG and AI agents. Without NoCap the bot invents a 90-day refund window; with NoCap the conflict between two sources is flagged and the LLM is not called."
 >
   <defs>
-    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-      <path d="M32 0H0V32" fill="none" stroke="#28382d" stroke-width=".6" />
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" fill="none" stroke="#223128" stroke-width=".7" />
     </pattern>
+    <linearGradient id="fade" x1="0" x2="1">
+      <stop offset="0" stop-color="#0f1512" />
+      <stop offset="1" stop-color="#0f1512" stop-opacity="0" />
+    </linearGradient>
+    <radialGradient id="glow" cx=".72" cy=".45" r=".55">
+      <stop offset="0" stop-color="#8ae4b6" stop-opacity=".14" />
+      <stop offset="1" stop-color="#8ae4b6" stop-opacity="0" />
+    </radialGradient>
   </defs>
-  <rect width="1400" height="440" rx="18" fill="#111713" />
-  <rect x="820" width="580" height="440" fill="url(#grid)" />
-  <rect width="1400" height="440" rx="18" fill="none" stroke="#344b3c" />
-  <g transform="translate(68,58)">
-    <rect width="48" height="48" rx="12" fill="#203b2b" />
-    <circle cx="21" cy="21" r="11" fill="none" stroke="#8ae4b6" stroke-width="2.5" />
-    <circle cx="21" cy="21" r="4" fill="#8ae4b6" />
-    <path d="M30 30l8 8" stroke="#8ae4b6" stroke-width="3" stroke-linecap="round" />
+  <rect width="1400" height="520" rx="20" fill="#0f1512" />
+  <rect x="640" width="760" height="520" fill="url(#grid)" />
+  <rect x="640" width="260" height="520" fill="url(#fade)" />
+  <rect width="1400" height="520" fill="url(#glow)" />
+  <rect x=".5" y=".5" width="1399" height="519" rx="20" fill="none" stroke="#2f4236" />
+
+  <g transform="translate(70,62)">
+    <rect width="54" height="54" rx="14" fill="#15342c" />
+    <path
+      d="M12 33c0-9.5 6-16 15-16s13.5 6 14 14.5"
+      fill="none"
+      stroke="#8ae4b6"
+      stroke-width="3.4"
+      stroke-linecap="round"
+    />
+    <path d="M10.5 33.5h34c2 0 2.6 2.2.8 3.1-4 1.9-8.8 2.3-14.4 2.3H10.5z" fill="#8ae4b6" />
+    <circle cx="27" cy="16.5" r="2.4" fill="#8ae4b6" />
+    <path d="M9 45L45 9" stroke="#ed9a99" stroke-width="4" stroke-linecap="round" />
   </g>
-  <g font-family="Inter,Segoe UI,Arial,sans-serif">
-    <text x="131" y="94" fill="#e8eee9" font-size="37" font-weight="600">
-      Jev
-      <tspan fill="#8ae4b6">Lens</tspan>
+  <g font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif">
+    <text x="140" y="102" fill="#e8eee9" font-size="40" font-weight="700" letter-spacing="-1">
+      No<tspan fill="#8ae4b6">Cap</tspan>
     </text>
-    <text x="68" y="148" fill="#8ae4b6" font-size="12" letter-spacing="4">DECISION-FIRST RAG</text>
-    <text x="66" y="211" fill="#e8eee9" font-size="50" letter-spacing="-1.5">Decide before</text>
-    <text x="66" y="269" fill="#8ae4b6" font-size="50" letter-spacing="-1.5">you generate.</text>
-    <text x="68" y="313" fill="#a1b0a5" font-size="17">
-      Inspect evidence. Replay thresholds. Know when to abstain.
+    <text x="72" y="166" fill="#8ae4b6" font-size="13" font-weight="600" letter-spacing="3.5">
+      HALLUCINATION FIREWALL FOR RAG &amp; AI AGENTS
     </text>
-    <text x="68" y="382" fill="#c1d5c7" font-size="13" letter-spacing="1">LAYA / JEV / OLLAMA</text>
-    <text x="359" y="382" fill="#a1b0a5" font-size="13">
-      Local workspace · Open source · Apache-2.0
+    <text x="68" y="238" fill="#e8eee9" font-size="64" font-weight="700" letter-spacing="-2.5">
+      No evidence,
     </text>
+    <text x="68" y="310" fill="#8ae4b6" font-size="64" font-weight="700" letter-spacing="-2.5">
+      no answer.
+    </text>
+    <text x="72" y="360" fill="#a9b8ad" font-size="19">
+      Judge retrieved evidence before your LLM speaks.
+    </text>
+    <text x="72" y="388" fill="#a9b8ad" font-size="19">
+      Answer · dig deeper · flag conflicts · or say “I don’t know”.
+    </text>
+    <g font-size="13" font-weight="600" fill="#c9d8cd">
+      <rect x="72" y="428" width="68" height="32" rx="16" fill="#18221c" stroke="#36503f" />
+      <text x="90" y="449">MCP</text>
+      <rect x="150" y="428" width="164" height="32" rx="16" fill="#18221c" stroke="#36503f" />
+      <text x="168" y="449">OpenAI-compatible</text>
+      <rect x="324" y="428" width="86" height="32" rx="16" fill="#18221c" stroke="#36503f" />
+      <text x="342" y="449">Ollama</text>
+      <rect x="420" y="428" width="196" height="32" rx="16" fill="#18221c" stroke="#36503f" />
+      <text x="438" y="449">LangChain · LlamaIndex</text>
+    </g>
   </g>
-  <g transform="translate(885,65)" font-family="Inter,Segoe UI,Arial,sans-serif">
-    <rect width="426" height="307" rx="12" fill="#19281e" stroke="#435c49" />
-    <text x="25" y="35" fill="#a1b0a5" font-size="10" letter-spacing="2">
-      EVIDENCE SIGNAL / ILLUSTRATION
+
+  <g transform="translate(790,56)" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif">
+    <rect width="548" height="408" rx="16" fill="#141d18" stroke="#36503f" />
+    <text x="28" y="40" fill="#ed9a99" font-size="11" font-weight="700" letter-spacing="2.5">
+      WITHOUT NOCAP
     </text>
-    <circle cx="31" cy="69" r="5" fill="#8ae4b6" />
-    <text x="47" y="74" fill="#e8eee9" font-size="21">Ready to answer</text>
-    <text x="25" y="114" fill="#a1b0a5" font-size="13">Supported</text>
-    <rect x="120" y="104" width="226" height="7" rx="4" fill="#2c3f32" />
-    <rect x="120" y="104" width="194" height="7" rx="4" fill="#8ae4b6" />
-    <text x="366" y="113" fill="#e8eee9" font-size="12">86%</text>
-    <text x="25" y="151" fill="#a1b0a5" font-size="13">Partial</text>
-    <rect x="120" y="141" width="226" height="7" rx="4" fill="#2c3f32" />
-    <rect x="120" y="141" width="23" height="7" rx="4" fill="#f2c477" />
-    <text x="366" y="150" fill="#e8eee9" font-size="12">10%</text>
-    <path d="M25 183H401" stroke="#3d5244" />
-    <text x="25" y="213" fill="#a1b0a5" font-size="12">Same judgment. A different policy.</text>
-    <path d="M25 245H395" stroke="#4d6a57" stroke-width="3" />
-    <path d="M25 245H263" stroke="#8ae4b6" stroke-width="3" />
-    <circle cx="263" cy="245" r="7" fill="#8ae4b6" />
-    <text x="25" y="281" fill="#8ae4b6" font-size="12">Threshold replay</text>
-    <text x="301" y="281" fill="#a1b0a5" font-size="11">0 model calls</text>
+    <rect x="186" y="58" width="334" height="40" rx="14" fill="#25312a" />
+    <text x="204" y="83" fill="#e8eee9" font-size="15">How many days do I have for a refund?</text>
+    <rect x="28" y="110" width="356" height="44" rx="14" fill="#2a1b1d" stroke="#ed9a99" />
+    <text x="46" y="138" fill="#f3c9c8" font-size="15">You have 90 days to request a refund. ✨</text>
+    <g transform="translate(408,104) rotate(-9)">
+      <rect width="104" height="40" rx="8" fill="none" stroke="#ed9a99" stroke-width="2.5" />
+      <text x="16" y="27" fill="#ed9a99" font-size="18" font-weight="800" letter-spacing="2">
+        CAP 🧢
+      </text>
+    </g>
+    <path d="M28 186H520" stroke="#2f4236" stroke-dasharray="4 6" />
+    <text x="28" y="222" fill="#8ae4b6" font-size="11" font-weight="700" letter-spacing="2.5">
+      WITH NOCAP
+    </text>
+    <rect x="28" y="238" width="492" height="146" rx="14" fill="#1b2420" stroke="#f2c477" />
+    <circle cx="52" cy="266" r="6" fill="#f2c477" />
+    <text x="68" y="272" fill="#f2c477" font-size="17" font-weight="700">review_conflict</text>
+    <text x="246" y="272" fill="#a9b8ad" font-size="13">conflicting 0.88 · LLM not called</text>
+    <g font-family="SFMono-Regular,Consolas,Menlo,monospace" font-size="13">
+      <text x="52" y="307" fill="#a9b8ad">refund-policy.md</text>
+      <text x="230" y="307" fill="#e8eee9">“…refund within <tspan fill="#8ae4b6">30 days</tspan>…”</text>
+      <text x="52" y="333" fill="#a9b8ad">refund-draft.md</text>
+      <text x="230" y="333" fill="#e8eee9">“…refund within <tspan fill="#f2c477">14 days</tspan>…”</text>
+    </g>
+    <text x="52" y="364" fill="#c9d8cd" font-size="13">
+      → Sources disagree. Ask which policy is authoritative.
+    </text>
   </g>
 </svg>

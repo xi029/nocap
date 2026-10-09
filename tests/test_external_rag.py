@@ -5,9 +5,9 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from jevlens.app import create_app
-from jevlens.config import Settings
-from jevlens.providers import ProviderError
+from nocap.app import create_app
+from nocap.config import Settings
+from nocap.providers import ProviderError
 
 
 def evidence():
@@ -22,8 +22,8 @@ def test_external_gate_bypasses_retrieval_and_generation_and_replays(tmp_path, m
     def forbidden(*args, **kwargs):
         pytest.fail("External gate must not retrieve or generate.")
 
-    monkeypatch.setattr("jevlens.engine.retrieve", forbidden)
-    monkeypatch.setattr("jevlens.engine.generate", forbidden)
+    monkeypatch.setattr("nocap.engine.retrieve", forbidden)
+    monkeypatch.setattr("nocap.engine.generate", forbidden)
     c = client(tmp_path)
     response = c.post(
         "/api/decide", json={"question": "How many days for refunds?", "evidence": evidence()}
@@ -93,7 +93,7 @@ def test_external_provider_failure_returns_502_without_saved_fake_trace(tmp_path
     async def unavailable(*args, **kwargs):
         raise ProviderError("Provider unavailable. No demo fallback was used.")
 
-    monkeypatch.setattr("jevlens.engine.evaluate", unavailable)
+    monkeypatch.setattr("nocap.engine.evaluate", unavailable)
     c = client(tmp_path)
     response = c.post(
         "/api/decide", json={"question": "How many days for refunds?", "evidence": evidence()}

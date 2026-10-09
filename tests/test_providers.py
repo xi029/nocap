@@ -4,9 +4,9 @@ import json
 import httpx
 import pytest
 
-from jevlens.config import Settings
-from jevlens.models import Evidence
-from jevlens.providers import ProviderError, evaluate, generate, prepare_state
+from nocap.config import Settings
+from nocap.models import Evidence
+from nocap.providers import ProviderError, evaluate, generate, prepare_state
 
 
 def evidence():
@@ -25,7 +25,7 @@ def evidence():
 def install_transport(monkeypatch, handler):
     original = httpx.AsyncClient
     monkeypatch.setattr(
-        "jevlens.providers.httpx.AsyncClient",
+        "nocap.providers.httpx.AsyncClient",
         lambda **kwargs: original(transport=httpx.MockTransport(handler), **kwargs),
     )
 

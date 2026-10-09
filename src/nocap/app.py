@@ -21,9 +21,7 @@ STATIC = Path(__file__).parent / "static"
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings()
     store = Store(settings.data_dir)
-    app = FastAPI(
-        title="JevLens", version=__version__, description="Inspectable evidence decisions."
-    )
+    app = FastAPI(title="NoCap", version=__version__, description="No evidence, no answer.")
     app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]", "testserver"]
     )
@@ -67,7 +65,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "ollama_model": settings.ollama_model,
             "scenarios": SCENARIOS,
             "version": __version__,
-            "providers": ["demo", "ollama", "laya", "jev"],
+            "providers": ["demo", "ollama", "openai", "laya", "jev"],
         }
 
     @app.get("/api/documents")
@@ -147,7 +145,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return JSONResponse(
             get_trace(trace_id),
             headers={
-                "Content-Disposition": f'attachment; filename="jevlens-{trace_id}.json"',
+                "Content-Disposition": f'attachment; filename="nocap-{trace_id}.json"',
             },
         )
 

@@ -1,4 +1,4 @@
-from jevlens.retrieval import chunks, retrieve, tokenize
+from nocap.retrieval import chunks, retrieve, tokenize
 
 
 def test_multilingual_retrieval_and_stable_ids():

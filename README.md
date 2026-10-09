@@ -1,264 +1,245 @@
-<p align="center"><img src="docs/assets/hero.svg" alt="JevLens — decide before you generate" width="100%"></p>
+<p align="center"><img src="docs/assets/hero.svg" alt="NoCap — no evidence, no answer. The hallucination firewall for RAG and AI agents." width="100%"></p>
 
 <p align="center">
-  <a href="https://github.com/xi029/jev-lens/actions/workflows/ci.yml"><img src="https://github.com/xi029/jev-lens/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/xi029/nocap/actions/workflows/ci.yml"><img src="https://github.com/xi029/nocap/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://pypi.org/project/nocap/"><img src="https://img.shields.io/pypi/v/nocap?color=8ae4b6&labelColor=202c24" alt="PyPI"></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-8ae4b6?labelColor=202c24" alt="Python 3.11+">
+  <img src="https://img.shields.io/badge/MCP-server-8ae4b6?labelColor=202c24" alt="MCP server">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-8ae4b6?labelColor=202c24" alt="Apache-2.0"></a>
-  <img src="https://img.shields.io/badge/Local-Ollama%20%2B%20Laya-8ae4b6?labelColor=202c24" alt="Local Ollama and Laya">
+  <a href="https://github.com/xi029/nocap/stargazers"><img src="https://img.shields.io/github/stars/xi029/nocap?style=flat&color=8ae4b6&labelColor=202c24" alt="GitHub stars"></a>
 </p>
 
-<p align="center"><strong>A local evidence workbench for Laya, Jev and Ollama.</strong><br>Give your RAG a decision layer. See why it answers, asks for evidence, or abstains.</p>
-<p align="center"><a href="README.zh-CN.md">简体中文</a> · <a href="#quickstart">Quickstart</a> · <a href="#plug-into-your-existing-rag">Integrate your RAG</a> · <a href="docs/providers.md">Providers</a> · <a href="docs/evaluation.md">Evaluation</a> · <a href="docs/api.md">API</a></p>
+<p align="center">
+  <b>Your RAG is capping. 🧢</b><br>
+  NoCap checks whether the retrieved evidence actually answers the question <i>before</i> your LLM speaks,<br>
+  then routes to <b>answer</b>, <b>retrieve more</b>, <b>abstain</b>, or <b>review a conflict</b>.
+</p>
 
-## Why JevLens?
+<p align="center">
+  <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="#-60-second-quickstart">Quickstart</a> ·
+  <a href="#-three-ways-to-plug-it-in">SDK · MCP · HTTP</a> ·
+  <a href="#-ci-for-hallucinations">CI</a> ·
+  <a href="docs/providers.md">Models</a> ·
+  <a href="docs/mcp.md">MCP guide</a>
+</p>
 
-Many RAG pipelines pass the top retrieved chunks straight to a generator. That works when the chunks contain the answer. It becomes harder to debug when they merely mention the topic, omit a required detail, or contain two incompatible policies. A retrieval score ranks relevance; it does not establish that the evidence supports the requested answer.
+---
 
-Jev and open-source decision engines such as Laya make an explicit, typed judgment worth exploring: **given this question and these excerpts, is the answer supported, partial, missing, or conflicting?** JevLens turns that idea into a useful local tool with inspectable inputs, a deterministic gate, and saved decisions. Laya supplies an open-weight path; Ollama lets you try the same workflow with models you already have.
+## 🧢 Why
 
-**The signature feature: policy replay.** Make the model judgment once, then change support or conflict thresholds on that saved distribution with **zero new model calls**. The original response remains attached to its original policy. This helps developers inspect the effect of a routing policy before changing a live assistant.
+Most RAG pipelines pass the top-k chunks straight to the generator. When those chunks only *mention* the topic, leave out the key detail, or contradict each other, the model fills the gap anyway, and does it confidently.
 
-The name combines **Jev** with **Lens**: a way to inspect the evidence and policy between retrieval and generation. JevLens is an independent application; its core and local workflow are open source, and hosted Jev is an optional provider.
+> "No cap" is slang for "no lie". NoCap adds one step between retrieval and generation that asks:
+> **do these excerpts support an answer, partly support it, miss it, or conflict?**
+> Then your own policy decides what happens next.
 
-### When is it useful?
+<table>
+<tr>
+<th width="50%">Without NoCap</th>
+<th width="50%">With NoCap</th>
+</tr>
+<tr>
+<td>
 
-| Situation                                                     | How JevLens helps                                                                   | What your application does next                                          |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| A support assistant retrieves a refund policy                 | Judge whether it includes the requested deadline and procedure                      | Generate from judged excerpts when the route is `answer`                 |
-| A deployment guide mentions Docker but omits Kubernetes setup | Expose partial evidence instead of letting the generator fill the gap               | Fetch better documentation or ask the user for context                   |
-| Two policy versions give different refund windows             | Show the evidence and a conflict route when the decision model detects disagreement | Resolve the source/version conflict before answering                     |
-| You are adjusting an assistant's answer threshold             | Replay the same judgment at several thresholds                                      | Inspect route changes, then validate a policy on labelled real questions |
+```text
+Q: How many days do I have for a refund?
+A: You have 90 days. ✨        ← invented
+```
 
-JevLens can skip your generator on a blocked route and make that decision reviewable. Whether this improves factual quality or saves total latency/cost depends on the decision model, retrieval and workload; decision inference itself adds work. The bundled fixture is a smoke evaluation, not evidence of a general performance gain.
+</td>
+<td>
 
-![Actual evidence studio: decision, sources, and threshold replay](docs/assets/studio.jpg)
+```text
+Q: How many days do I have for a refund?
+→ review_conflict  (conflicting 0.88)
+  refund-policy.md: "within 30 days"
+  refund-draft.md:  "within 14 days"
+  LLM not called. Ask which source wins.
+```
 
-_Actual application screenshot in clearly labelled demo mode. Demo scores are a lexical simulation, not AI probabilities._
+</td>
+</tr>
+</table>
 
-## What you can do
+## ✨ What you get
 
-| Feature                      | What it gives you                                                                                                                               |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Bring your own retrieval** | Send existing search results to `/api/decide`; keep your vector store, framework and generator.                                                 |
-| **Decision-first RAG**       | Route to `answer`, `retrieve_more`, `abstain`, or `review_conflict` before generation.                                                          |
-| **Open-weight Laya**         | Connect to your own `/v1/systemone` server. Four cyclic label rotations are averaged by default to address a known source of order sensitivity. |
-| **Local Ollama**             | Judge evidence and optionally synthesize cited claims with `qwen3.5:4b` or another installed model.                                             |
-| **Hosted Jev**               | Use the same typed choice question with a server-side TypeSafe API key.                                                                         |
-| **Evidence inspection**      | See exactly the excerpts submitted to the provider, their source IDs, and BM25 retrieval scores.                                                |
-| **Policy replay**            | Explore threshold changes without inference or rewriting the original trace.                                                                    |
-| **Portable traces**          | Export the question, input, distribution, policy, evidence, timings, and citations as JSON.                                                     |
-| **Low-friction demo**        | Explore the entire UI without accounts, keys, weights, embeddings, or a vector database.                                                        |
+| | Feature | Why it matters |
+| --- | --- | --- |
+| 🛡️ | **Evidence gate** | Four routes: `answer` · `retrieve_more` · `abstain` · `review_conflict`. Your generator runs only on `answer`. |
+| 🐍 | **3-line Python SDK** | `@gate.guard` wraps any generator. Accepts strings, dicts, LangChain `Document`s and LlamaIndex nodes. |
+| 🤖 | **MCP server** | Give Claude Code, Cursor, Codex or any MCP agent a `check_evidence` tool. |
+| 🔌 | **Any model as the judge** | Ollama, any **OpenAI-compatible** API (OpenAI, DeepSeek, Qwen, vLLM, LM Studio…), open-weight Laya, hosted Jev. |
+| 🧪 | **CI for hallucinations** | `nocap eval` runs labelled route tests and fails the build on **leaks**. Also available as a GitHub Action. |
+| ⏪ | **Zero-cost policy replay** | Change thresholds on a saved decision and re-route it with **0 model calls**. |
+| 🔍 | **Inspectable traces** | Exact excerpts sent, the distribution, timings and citations, as JSON with a permalink. |
+| 🏠 | **Local-first** | FastAPI + SQLite + a no-build web UI. The demo needs no keys, models, embeddings or vector DB. |
 
-This is an independent application. [Jev](https://docs.typesafe.ai/introduction) is TypeSafe's hosted decision model. [Laya](https://github.com/NandhaKishorM/laya) is a separate open-source decision engine. [Ollama](https://docs.ollama.com/api/chat) runs the local generative model. Their probability semantics differ; JevLens does not claim interchangeable accuracy or calibration.
-
-## Quickstart
-
-Requires **Python 3.11+** and [uv](https://docs.astral.sh/uv/getting-started/installation/).
+## 🚀 60-second quickstart
 
 ```sh
-git clone https://github.com/xi029/jev-lens.git
-cd jev-lens
-uv sync
-uv run jevlens demo
-uv run jevlens serve
+pip install nocap
+nocap demo     # load fictional sample docs
+nocap serve    # open http://127.0.0.1:8787
 ```
 
-Open **[http://127.0.0.1:8787](http://127.0.0.1:8787)**. These commands work in PowerShell, macOS and Linux. Default **demo mode** is clearly marked and makes no model calls or downloads.
+Or from source with [uv](https://docs.astral.sh/uv/): `git clone https://github.com/xi029/nocap && cd nocap && uv sync && uv run nocap demo && uv run nocap serve`.
 
-<details>
-<summary>Use pip or an existing Conda environment</summary>
+The default **demo** judge is a clearly labelled lexical simulation, so you can explore everything offline. Switch to a real model in the UI or with `NOCAP_PROVIDER` (see [models](#-bring-your-own-judge)).
 
-Activate a Python 3.11+ environment, then:
+![The NoCap workbench flagging a refund-policy conflict: decision distribution, policy replay and evidence](docs/assets/studio.jpg)
 
-```sh
-python -m pip install -e .
-jevlens demo
-jevlens serve
-```
+<sub>Actual workbench screenshot in demo mode. Demo scores are a lexical simulation, not AI probabilities.</sub>
 
-For example, `conda activate agent` works if that environment has a compatible Python version. Use `python -m pip install -e ".[dev]"` for development.
+**Try this:** ask "How do I request a refund?" → drag **Minimum support** to 95% and watch the route change with no model call → click **Add conflicting policy** and ask again.
 
-</details>
+## 🔌 Three ways to plug it in
 
-### Try the three-minute walkthrough
+![Any retriever → NoCap gate → answer, retrieve_more, abstain or review_conflict](docs/assets/architecture.svg)
 
-1. Load sample knowledge and inspect **“How do I request a refund?”**.
-2. Move **Minimum support** from 70% to 95%. Replay changes the route while the original response stays visible.
-3. Choose **Missing detail** to inspect a question whose exact pricing is absent.
-4. Click **Add conflicting policy**. Inspect the refund window with two disagreeing policies.
-5. Add a `.md` or `.txt` file and export a trace. **Ctrl / Cmd + Enter** submits.
-
-Samples are original fictional documents. Deleting the draft resolves the demo conflict for future queries. Saved traces retain their original excerpts.
-
-### Use your local Qwen model
-
-Ensure Ollama is running and the model appears in `ollama list`. If needed:
-
-```sh
-ollama pull qwen3.5:4b
-```
-
-Skip the pull if already installed. Choose **Decision → Ollama · local** and **Answer → Ollama · generate**. No key is needed. To set the startup provider, copy `.env.example` to `.env`:
-
-```dotenv
-JEVLENS_PROVIDER=ollama
-JEVLENS_OLLAMA_MODEL=qwen3.5:4b
-```
-
-Ollama returns **uncalibrated, self-reported LLM estimates**. This is not the same as a Laya or Jev decision head. See [provider setup and troubleshooting](docs/providers.md).
-
-<details>
-<summary>Actual local Qwen decision and cited response</summary>
-
-![Real qwen3.5:4b decision and generation on original sample documents](docs/assets/ollama.jpg)
-
-This is a real local request, not the demo simulation. The measured time is shown as recorded; inference speed depends on hardware and concurrent requests.
-
-</details>
-
-### Use open-source Laya as the decision layer
-
-Install Laya separately or use the optional extra:
-
-```sh
-uv sync --extra laya
-```
-
-PowerShell:
-
-```powershell
-$env:LAYA_HOST="127.0.0.1"
-$env:LAYA_PORT="8123"
-$env:LAYA_MODELS="english"
-uv run --extra laya laya-serve
-```
-
-macOS / Linux:
-
-```sh
-LAYA_HOST=127.0.0.1 LAYA_PORT=8123 LAYA_MODELS=english uv run --extra laya laya-serve
-```
-
-In another terminal, run `uv run jevlens serve`, then choose **Laya · open weights**. First startup downloads a Hugging Face checkpoint. See [Providers](docs/providers.md) for CPU-only installation, GPU settings and multilingual models.
-
-## How it works
-
-![Retrieve, decide, gate, respond, and replay saved traces](docs/assets/architecture.svg)
-
-1. **Retrieve:** split documents into bounded excerpts and rank with BM25. English terms and Chinese bigrams need no embedding downloads. Lexical retrieval can miss semantic paraphrases.
-2. **Decide:** ask a four-option coverage question. Laya averages four cyclic label presentations by default; Jev uses a standard single question. Ollama follows a validated JSON schema.
-3. **Gate:** empty evidence abstains; conflicts above your trigger go to review; sufficient support answers; otherwise request more evidence or abstain.
-4. **Respond:** return verbatim excerpts, or call Ollama only on the `answer` route. Generated claims must cite IDs from the submitted evidence.
-5. **Replay:** recompute the route from the saved distribution. No retriever or model is called.
-
-Built with FastAPI, Pydantic and SQLite, with a bundled HTML/CSS/JavaScript workbench. Decision providers are separate from the deterministic policy, so replay does not need a running model.
-
-`retrieve_more` recommends adding better sources; this release does not automatically search the web. `review_conflict` asks you to reconcile sources; it does not infer which policy is authoritative.
-
-## Plug into your existing RAG
-
-Keep your retriever and generator. Insert JevLens **after retrieval and before generation**. Send your question and retrieved chunks to `POST /api/decide`; this endpoint runs no retrieval or answer generation and does not import chunks into the document collection. It saves a trace that you can inspect, export and replay in the workbench.
-
-![An existing retriever sends excerpts to JevLens, which gates the existing generator](docs/assets/integration.svg)
-
-With `uv run jevlens serve` running, this is a complete, key-free integration request:
+### 1. Python SDK: wrap your generator
 
 ```python
-import httpx
+from nocap import Gate
 
-response = httpx.post(
-    "http://127.0.0.1:8787/api/decide",
-    json={
-        "question": "How do I request a refund?",
-        "provider": "demo",  # Use laya or ollama after configuring a real provider.
-        "evidence": [
-            {
-                "id": "refund-1",
-                "source": "refund-policy.md",
-                "text": "To request a refund, email support with the order number.",
-            }
-        ],
-        "policy": {"support_threshold": 0.70, "conflict_threshold": 0.35},
-    },
-    timeout=150,
-    trust_env=False,
-)
-response.raise_for_status()  # Stop here on a gate/provider error.
-trace = response.json()
-print(trace["action"], trace["reason"])
-# Call your generator only for action == "answer", using trace["evidence"].
+gate = Gate(provider="ollama")  # or "openai", "laya", "jev", "demo"
+
+
+@gate.guard(fallback="I couldn't find that in our docs.")
+def answer(question, evidence):
+    return llm(question, evidence)  # runs ONLY when the evidence supports an answer
+
+
+answer("How do I request a refund?", retriever.invoke("How do I request a refund?"))
 ```
 
-Replace `evidence` with results from your existing vector search, keyword search or framework. Use the **returned** excerpts for generation: JevLens may trim input to the provider budget, and the judgment applies to what the model actually saw. Demo scores are a lexical simulation; use a real provider and validate thresholds before applying this to real queries.
+Need the details? `verdict = gate.check(question, docs)` gives you `verdict.action`, `verdict.probabilities`, `verdict.evidence` and `verdict.ok`. Async functions work too. Runnable: [`examples/quickstart.py`](examples/quickstart.py).
 
-| Returned action   | Integration behavior                                                            |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `answer`          | Allow your generator to use the returned evidence                               |
-| `retrieve_more`   | Fetch better evidence, ask a clarifying question, or stop; bound any retry loop |
-| `abstain`         | Return an insufficient-evidence response and skip generation                    |
-| `review_conflict` | Send the conflicting sources to a person or your source-resolution workflow     |
-
-Try the [runnable adapter](examples/external_rag.py), whose two callbacks can be replaced with your application's retrieval and generation functions:
+### 2. MCP: make your agent show its receipts
 
 ```sh
-uv run python examples/external_rag.py --provider demo
-uv run python examples/external_rag.py --provider demo --question "Who won lunar chess?"
-# After configuring your local provider:
-uv run python examples/external_rag.py --provider ollama
+claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap[mcp]" nocap mcp
 ```
 
-The example generator returns verbatim excerpts so the demo needs no extra models. The adapter never calls it on a blocked route or an HTTP error. [Integration guide](docs/integration.md) covers callback contracts, direct Python use without a server, input limits, error handling and trace privacy.
+![Claude Code, Cursor, Codex and other MCP clients call check_evidence and follow next_step](docs/assets/mcp.svg)
 
-For a standalone knowledge assistant, use the included workbench and `/api/query` instead. That path supplies BM25 retrieval and optional Ollama generation for you. Both paths use the same decision providers and policy logic.
+Your agent gets `check_evidence`, `ask_knowledge_base`, `add_document` and `replay_decision`. Each verdict carries a `next_step`, such as *"Tell the user the sources do not contain the answer. Do not guess."* Configs for Cursor, Claude Desktop and Codex are in the [MCP guide](docs/mcp.md).
 
-## CLI and API
+### 3. HTTP: any language, any stack
 
 ```sh
-uv run jevlens ingest ./my-notes.md
-uv run jevlens ask "How do I request a refund?" --provider ollama --generate
-uv run python scripts/evaluate.py --provider demo
+curl -s http://127.0.0.1:8787/api/decide -H "Content-Type: application/json" -d '{
+  "question": "How do I request a refund?",
+  "evidence": [{"id": "r1", "source": "refund-policy.md",
+                "text": "To request a refund, email support with the order number."}]
+}'
+# → {"action": "answer", "reason": "...", "decision": {"probabilities": {...}}, ...}
 ```
 
-Replay the bundled real Qwen trace without any model running: `uv run python examples/replay.py`.
+| Route | What your app should do |
+| --- | --- |
+| `answer` | Generate from the **returned** (judged) excerpts |
+| `retrieve_more` | Search again, ask a clarifying question, or stop. Bound the retry loop. |
+| `abstain` | Say "I don't know" and skip generation |
+| `review_conflict` | Show both sources to a person or your source-of-truth rules |
 
-CLI queries print complete traces. See [API examples](docs/api.md) and local **[/docs](http://127.0.0.1:8787/docs)**. The frontend ships with the Python package and requires no Node build step.
+See the [integration guide](docs/integration.md) and [API reference](docs/api.md).
 
-### Docker
+## 🧪 CI for hallucinations
+
+Write the routes you expect, then fail the build when your RAG would answer without evidence.
+
+```jsonl
+{"id": "refund", "question": "How do I request a refund?", "expect": "answer"}
+{"id": "pricing", "question": "What is the exact team plan pricing?", "expect": "retrieve_more"}
+{"id": "off-topic", "question": "Who won the lunar chess championship?", "expect": "abstain"}
+```
 
 ```sh
-docker compose up --build
+nocap eval cases.jsonl --docs ./knowledge --provider ollama --max-leaks 0
 ```
 
-Compose publishes only on localhost and persists a named volume. Model URLs use `host.docker.internal`; your model server must accept connections from Docker's network. Host services bound strictly to loopback may be unreachable on some systems. Prefer native Python to keep all services loopback-only. The image runs as a non-root user. [Deployment notes](docs/providers.md#docker).
+![Real nocap eval output: 6/8 routes matched, 0 leaks, 2 over-refusals](docs/assets/eval.svg)
 
-## Evaluation and honest limits
+A **leak** means the gate allowed an answer it should have blocked. An **over-refusal** means it blocked an answer the sources supported. Both are counted; you choose which one fails CI. As a GitHub Action:
+
+```yaml
+- uses: xi029/nocap@v0.2.0
+  with:
+    cases: tests/rag-cases.jsonl
+    docs: knowledge/
+    provider: openai          # set NOCAP_OPENAI_* in env
+    max-leaks: 0
+```
+
+## 🧠 Bring your own judge
+
+| Provider | Setup | Score meaning |
+| --- | --- | --- |
+| `ollama` | `ollama pull qwen3.5:4b` and choose **Ollama · local** | Self-reported, normalized, uncalibrated |
+| `openai` | `NOCAP_OPENAI_URL`, `NOCAP_OPENAI_MODEL`, `NOCAP_OPENAI_API_KEY`. Works with OpenAI, DeepSeek, Qwen/DashScope, OpenRouter, vLLM, LM Studio | Self-reported, normalized, uncalibrated |
+| `laya` | Self-hosted [Laya](https://github.com/NandhaKishorM/laya) `/v1/systemone` | Choice-head distribution, averaged over 4 label rotations |
+| `jev` | [TypeSafe Jev](https://docs.typesafe.ai/introduction) API key | Hosted decision distribution |
+| `demo` | Nothing | Lexical simulation for exploring the UI |
+
+```dotenv
+# .env — for example, DeepSeek as the judge
+NOCAP_PROVIDER=openai
+NOCAP_OPENAI_URL=https://api.deepseek.com/v1
+NOCAP_OPENAI_MODEL=deepseek-chat
+NOCAP_OPENAI_API_KEY=sk-...
+```
+
+Every judge answers the same typed question; the policy, traces and replay are identical. [Provider setup and troubleshooting →](docs/providers.md)
+
+<details>
+<summary><b>Real local run: qwen3.5:4b judging and answering with citations</b></summary>
+
+![A real qwen3.5:4b decision and a cited answer on the sample documents](docs/assets/ollama.jpg)
+
+A real request on a CPU-bound Windows machine, not the demo simulation. It took about 85 seconds end to end there; speed depends entirely on your hardware and model.
+
+</details>
+
+## ⏪ Policy replay
+
+Every decision is saved with its full distribution. Move the thresholds and NoCap recomputes the route from the saved judgment with **zero new model calls**, while the original response stays attached to its original policy. Use it to see how many questions a stricter policy would block before you ship that policy.
 
 ```sh
-uv sync --extra dev
-uv run ruff check .
-uv run ruff format --check .
-uv run pytest -q
-uv run python scripts/evaluate.py --provider ollama --output artifacts/ollama.json
+uv run python examples/replay.py    # replay a real Qwen trace, no model running
 ```
 
-The eight-case fixture is an original fictional **routing smoke evaluation**, not a representative or held-out benchmark. Reports include errors and unexpected routes. We publish no invented speedups, accuracy comparisons, token savings, or hallucination reduction claims. [Methodology and verification](docs/evaluation.md).
+## 🤔 How is this different?
 
-- Citation **IDs** are validated. Claim truth and semantic entailment are not automatically verified.
-- Character budgets do not guarantee fit within a tokenizer limit. Traces show submitted excerpts; checkpoint-side truncation can still occur.
-- Laya's label order, wording and checkpoint affect results. Rotations address one source of bias and do not establish calibration.
-- Demo is a lexical simulation with disclosed missing-detail rules, not reasoning over arbitrary documents.
-- This is a local, single-user workbench without authentication or document ACLs. [Security](SECURITY.md).
+- **Evaluation frameworks** (RAGAS, DeepEval, promptfoo…) score answers *after* generation, usually offline. NoCap makes a **runtime routing decision before generation** and can skip the generator. Use both: NoCap's `nocap eval` tests routes, not answer quality.
+- **Guardrail libraries** usually validate *outputs* (format, toxicity, PII). NoCap judges whether the *inputs* support an answer at all, and tells you whether to answer, dig deeper, abstain or escalate.
+- **"Answer only from context" prompts** leave the decision inside the same model call that writes the answer. NoCap makes it a separate, inspectable, replayable step with your thresholds.
 
-## Roadmap
+## 📏 Honest limits
 
-- [ ] Ready-made framework adapters for external vector retrieval
-- [ ] Custom labelled evaluations and risk / coverage curves
-- [ ] Compare checkpoints and question schemas on identical evidence
-- [ ] Inspectable claim-level entailment checks
-- [ ] Trace retention controls and redacted sharing
+- `answer` means "meets your threshold", not "guaranteed true". LLM judges are uncalibrated; validate thresholds on your own labelled questions.
+- Generated citations are checked for valid **IDs**, not semantic entailment.
+- The built-in retriever is BM25 (no embeddings). For semantic search, bring your own retriever via the SDK, MCP or `/api/decide`.
+- The bundled 8-case fixture is a smoke test, not a benchmark. We publish no invented accuracy, speed or hallucination-reduction numbers. [Methodology →](docs/evaluation.md)
+- Local, single-user workbench without auth. See [SECURITY.md](SECURITY.md).
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) or [open an issue](https://github.com/xi029/jev-lens/issues). If evidence-first tools are useful to you, a star helps others find the project.
+## 🗺️ Roadmap
 
-## License and acknowledgements
+- [x] OpenAI-compatible judges · MCP server · Python SDK · `nocap eval` + GitHub Action
+- [ ] Claim-level entailment check of generated answers
+- [ ] Risk / coverage curves from labelled sets
+- [ ] Native LangChain `Runnable` and LlamaIndex postprocessor wrappers
+- [ ] Shareable, redacted trace cards
+- [ ] OpenAI-compatible **proxy mode**: put NoCap in front of any chat app
 
-[Apache-2.0](LICENSE). Thanks to [Laya](https://github.com/NandhaKishorM/laya), [TypeSafe's System One API](https://docs.typesafe.ai/api) and [Ollama](https://github.com/ollama/ollama). Weights are not included; upstream models and dependencies retain their own licenses. See [NOTICE](NOTICE).
+Ideas and PRs welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) or [open an issue](https://github.com/xi029/nocap/issues).
+
+## ⭐ Support
+
+If NoCap stopped your bot from making something up, **a star helps other builders find it.**
+
+<a href="https://star-history.com/#xi029/nocap&Date"><img src="https://api.star-history.com/svg?repos=xi029/nocap&type=Date" alt="Star history" width="600"></a>
+
+## License
+
+[Apache-2.0](LICENSE). NoCap is an independent project. Thanks to [Laya](https://github.com/NandhaKishorM/laya), [TypeSafe](https://docs.typesafe.ai/api), [Ollama](https://github.com/ollama/ollama) and the [Model Context Protocol](https://modelcontextprotocol.io). Model weights are not included; upstream models keep their own licenses. See [NOTICE](NOTICE).

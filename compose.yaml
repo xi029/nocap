@@ -1,19 +1,22 @@
 services:
-  jevlens:
+  nocap:
     build: .
     ports:
       - "127.0.0.1:8787:8787"
     environment:
-      JEVLENS_PROVIDER: ${JEVLENS_PROVIDER:-demo}
-      JEVLENS_OLLAMA_URL: http://host.docker.internal:11434
-      JEVLENS_OLLAMA_MODEL: ${JEVLENS_OLLAMA_MODEL:-qwen3.5:4b}
-      JEVLENS_LAYA_URL: http://host.docker.internal:8123
-      JEVLENS_LAYA_MODEL: ${JEVLENS_LAYA_MODEL:-english}
-      JEVLENS_LAYA_API_KEY: ${JEVLENS_LAYA_API_KEY:-}
-      JEVLENS_JEV_API_KEY: ${JEVLENS_JEV_API_KEY:-}
+      NOCAP_PROVIDER: ${NOCAP_PROVIDER:-demo}
+      NOCAP_OLLAMA_URL: http://host.docker.internal:11434
+      NOCAP_OLLAMA_MODEL: ${NOCAP_OLLAMA_MODEL:-qwen3.5:4b}
+      NOCAP_OPENAI_URL: ${NOCAP_OPENAI_URL:-https://api.openai.com/v1}
+      NOCAP_OPENAI_MODEL: ${NOCAP_OPENAI_MODEL:-}
+      NOCAP_OPENAI_API_KEY: ${NOCAP_OPENAI_API_KEY:-}
+      NOCAP_LAYA_URL: http://host.docker.internal:8123
+      NOCAP_LAYA_MODEL: ${NOCAP_LAYA_MODEL:-english}
+      NOCAP_LAYA_API_KEY: ${NOCAP_LAYA_API_KEY:-}
+      NOCAP_JEV_API_KEY: ${NOCAP_JEV_API_KEY:-}
     volumes:
-      - jevlens-data:/app/data
+      - nocap-data:/app/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
 volumes:
-  jevlens-data:
+  nocap-data:

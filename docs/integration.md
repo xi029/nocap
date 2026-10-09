@@ -1,12 +1,37 @@
-# Add JevLens to an existing RAG
+# Add NoCap to an existing RAG
 
-JevLens can be a standalone workbench or an evidence gate inside an application. The integration path accepts **already retrieved chunks**, makes a coverage judgment and returns a route. Your application keeps its retriever, vector store, generator and user-facing response.
+NoCap can be a standalone workbench or an evidence gate inside an application. The integration path accepts **already retrieved chunks**, makes a coverage judgment and returns a route. Your application keeps its retriever, vector store, generator and user-facing response.
 
-![External retrieval and generation with a JevLens decision gate](assets/integration.svg)
+![Any retriever sends excerpts to the NoCap gate, which routes before generation](assets/architecture.svg)
+
+## Python SDK (recommended)
+
+`pip install nocap` gives you an in-process gate. No server needs to run.
+
+```python
+from nocap import Gate
+
+gate = Gate(provider="ollama")  # or "openai", "laya", "jev", "demo"
+
+
+@gate.guard(fallback="I couldn't find that in the documentation.")
+def answer(question, evidence):
+    # Runs ONLY on the answer route, with exactly the excerpts that were judged.
+    return my_llm(question, evidence)
+
+
+answer("How do I request a refund?", retriever.invoke("How do I request a refund?"))
+```
+
+`evidence` can be a list of strings, dicts with `text` / `source` / `id`, LangChain `Document`s or LlamaIndex nodes; NoCap reads `page_content`, `text` or `get_content()` and the `source` / `file_name` metadata without importing either framework. The first 8 items are judged, each capped at 6,000 characters.
+
+- `gate.check(question, evidence)` returns a `Verdict` with `action`, `reason`, `probabilities`, judged `evidence`, `trace_id` and `ok` (true only for `answer`). Use `await gate.acheck(...)` inside async code.
+- `@gate.guard()` without a fallback raises `nocap.Blocked`; the exception carries `.verdict`. A callable fallback receives the `Verdict`, so you can return a route-specific message. Async functions are supported.
+- Traces are saved to `NOCAP_DATA_DIR` (default `./data`) so that `nocap serve` shows every decision your application made. Pass `save_traces=False` to keep nothing, or `data_dir=` to choose a location.
 
 ## HTTP integration
 
-Start `uv run jevlens serve`. From your application's backend, send `POST /api/decide`:
+Start `uv run nocap serve`. From your application's backend, send `POST /api/decide`:
 
 ```python
 import httpx
@@ -43,7 +68,7 @@ chunks = [
 
 `search_results` above represents your application's own results; change the field names to match your retriever. Preserve meaningful stable IDs when possible. Only text and excerpt IDs are sent in the decision state; the source name is retained in the trace for inspection. The input does not accept retrieval scores because a score's meaning differs across retrievers. Returned external evidence has `score: 0` as an unused placeholder, and the UI labels it as external evidence rather than BM25.
 
-The caller determines chunk order. JevLens includes chunks in that order until the provider character budget is reached, potentially retaining only the beginning of the last chunk. Use `trace["evidence"]` as your generator context: it contains exactly the excerpts judged. Passing additional unjudged context to the generator means that the gate no longer describes the generation input. Warnings and `input_state` expose trimming; provider-reported token truncation blocks generation permission.
+The caller determines chunk order. NoCap includes chunks in that order until the provider character budget is reached, potentially retaining only the beginning of the last chunk. Use `trace["evidence"]` as your generator context: it contains exactly the excerpts judged. Passing additional unjudged context to the generator means that the gate no longer describes the generation input. Warnings and `input_state` expose trimming; provider-reported token truncation blocks generation permission.
 
 ### Input contract
 
@@ -82,20 +107,20 @@ uv run python examples/external_rag.py --provider demo --question "Who won lunar
 
 That example uses fictional retrieval data and an excerpt-only generator; it requires no additional model. In your application, generate only for `answer`. For `retrieve_more`, try better evidence or request clarification with a bounded retry count. For `abstain`, return an insufficient-evidence response. For `review_conflict`, use a person or your existing source-resolution workflow. On an HTTP/provider error, stop before generation and report an unavailable gate. The example propagates that error.
 
-Your generator runs outside JevLens: its answer, citations and timings are **not** attached to the saved decision trace or validated by JevLens. Store them in your own logs if needed. A route of `answer` is permission under the selected policy, not a guarantee of factual correctness.
+Your generator runs outside NoCap: its answer, citations and timings are **not** attached to the saved decision trace or validated by NoCap. Store them in your own logs if needed. A route of `answer` is permission under the selected policy, not a guarantee of factual correctness.
 
-## Direct Python integration without an HTTP server
+## Lower-level Python integration
 
-Install JevLens from this repository into your Python 3.11+ environment with `python -m pip install .`. Then call the same engine directly:
+The `Gate` SDK above wraps these building blocks. To control storage and settings yourself, call the engine directly:
 
 ```python
 import asyncio
 from pathlib import Path
 
-from jevlens.config import Settings
-from jevlens.engine import run_decision
-from jevlens.models import DecisionQuery
-from jevlens.store import Store
+from nocap.config import Settings
+from nocap.engine import run_decision
+from nocap.models import DecisionQuery
+from nocap.store import Store
 
 
 async def main():
@@ -111,7 +136,7 @@ async def main():
 asyncio.run(main())
 ```
 
-For an existing asynchronous application, `await run_decision(...)` from its event loop. `DecisionQuery` validates the same limits as HTTP. `ProviderError` propagates to the caller and must stop generation. This release exposes these functions as application building blocks; it has no separate LangChain/LlamaIndex package or hosted service.
+For an existing asynchronous application, `await run_decision(...)` from its event loop. `DecisionQuery` validates the same limits as HTTP. `ProviderError` propagates to the caller and must stop generation. There is no hosted NoCap service.
 
 ## Inspect, tune and store responsibly
 

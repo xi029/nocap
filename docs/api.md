@@ -32,7 +32,7 @@ $trace = Invoke-RestMethod http://127.0.0.1:8787/api/query -Method Post -Content
 $trace.action
 ```
 
-Providers: `demo`, `ollama`, `laya`, `jev`; omit to use the configured default. Generators: `extractive` (verbatim excerpts), `ollama`, or `none` (decision only). `top_k`: 1–8, default 4. Questions: 3–500 nonblank characters. `support_threshold`: 0.25–1; `conflict_threshold`: 0.05–1.
+Providers: `demo`, `ollama`, `openai` (any OpenAI-compatible API), `laya`, `jev`; omit to use the configured default. Generators: `extractive` (verbatim excerpts), `ollama`, `openai`, or `none` (decision only). `top_k`: 1–8, default 4. Questions: 3–500 nonblank characters. `support_threshold`: 0.25–1; `conflict_threshold`: 0.05–1.
 
 The response is a saved trace with `schema_version=1`, `id`, `created` (UTC), `action`, `reason`, `decision`, `evidence`, `claims`, `policy`, `timing_ms` and `input_state`. New traces identify `evidence_origin` as `bm25` or `external`; older bundled traces may omit it. `generator_called` distinguishes a generator call from evidence-only output; `generation_error` records generation failures. `decision.raw_probabilities` preserves Ollama's original scores. `decision.question_schema` preserves the System One questions.
 

@@ -92,6 +92,16 @@ def demo_decision(question: str, evidence: list[Evidence], input_chars: int) -> 
     )
 
 
+def parse_json(content: str) -> dict:
+    content = (content or "").strip()
+    # Some model versions wrap valid JSON in one Markdown code fence.
+    # Accept only that exact wrapper, not prose with a JSON fragment buried in it.
+    fenced = re.fullmatch(r"```(?:json)?\s*\n?(.*?)\n?```", content, re.DOTALL)
+    if fenced:
+        content = fenced.group(1)
+    return json.loads(content)
+
+
 async def ollama_chat(settings: Settings, messages: list[dict], schema: dict) -> tuple[dict, dict]:
     messages = [dict(message) for message in messages]
     messages[0]["content"] += (
@@ -112,18 +122,56 @@ async def ollama_chat(settings: Settings, messages: list[dict], schema: dict) ->
         )
         response.raise_for_status()
         payload = response.json()
-    content = payload["message"]["content"].strip()
-    # Some Ollama/model versions wrap valid JSON in one Markdown code fence.
-    # Accept only that exact wrapper, not prose with a JSON fragment buried in it.
-    fenced = re.fullmatch(r"```(?:json)?\s*\n?(.*?)\n?```", content, re.DOTALL)
-    if fenced:
-        content = fenced.group(1)
-    result = json.loads(content)
+    result = parse_json(payload["message"]["content"])
     usage = {
         "input_tokens": payload.get("prompt_eval_count", 0),
         "output_tokens": payload.get("eval_count", 0),
     }
     return result, usage
+
+
+async def openai_chat(settings: Settings, messages: list[dict], schema: dict) -> tuple[dict, dict]:
+    """OpenAI-compatible Chat Completions with JSON mode, the most widely supported option."""
+    if not settings.openai_model:
+        raise ProviderError("Set NOCAP_OPENAI_MODEL (and NOCAP_OPENAI_URL / NOCAP_OPENAI_API_KEY).")
+    messages = [dict(message) for message in messages]
+    messages[0]["content"] += (
+        " Return ONLY a JSON object, without prose. JSON schema: " + json.dumps(schema)
+    )
+    headers = (
+        {"Authorization": "Bearer " + settings.openai_api_key} if settings.openai_api_key else {}
+    )
+    async with httpx.AsyncClient(timeout=settings.timeout_seconds, trust_env=False) as client:
+        response = await client.post(
+            settings.openai_url.rstrip("/") + "/chat/completions",
+            headers=headers,
+            json={
+                "model": settings.openai_model,
+                "messages": messages,
+                "temperature": 0,
+                "max_tokens": 900,
+                "response_format": {"type": "json_object"},
+            },
+        )
+        response.raise_for_status()
+        payload = response.json()
+    content = (payload["choices"][0]["message"]["content"] or "").strip()
+    usage = payload.get("usage") or {}
+    return parse_json(content), {
+        "input_tokens": usage.get("prompt_tokens", 0),
+        "output_tokens": usage.get("completion_tokens", 0),
+    }
+
+
+async def llm_chat(
+    backend: str, settings: Settings, messages: list[dict], schema: dict
+) -> tuple[dict, dict]:
+    chat = openai_chat if backend == "openai" else ollama_chat
+    return await chat(settings, messages, schema)
+
+
+def llm_model(backend: str, settings: Settings) -> str:
+    return settings.openai_model if backend == "openai" else settings.ollama_model
 
 
 async def evaluate(
@@ -147,7 +195,7 @@ async def evaluate(
     try:
         if provider == "demo":
             return demo_decision(question, included, chars), included, state
-        if provider == "ollama":
+        if provider in {"ollama", "openai"}:
             messages = [
                 {
                     "role": "system",
@@ -162,13 +210,13 @@ async def evaluate(
             ]
             for attempt in range(2):
                 try:
-                    result, usage = await ollama_chat(
-                        settings, messages, ProbabilityOutput.model_json_schema()
+                    result, usage = await llm_chat(
+                        provider, settings, messages, ProbabilityOutput.model_json_schema()
                     )
                     raw = ProbabilityOutput.model_validate(result).probabilities.model_dump()
                     total = sum(raw.values())
                     if total <= 0:
-                        raise ValueError("Ollama returned all-zero weights")
+                        raise ValueError("The model returned all-zero weights")
                     break
                 except (ValueError, KeyError, TypeError):
                     if attempt:
@@ -184,7 +232,7 @@ async def evaluate(
                     probabilities={key: value / total for key, value in raw.items()},
                     raw_probabilities=raw,
                     provider=provider,
-                    model=settings.ollama_model,
+                    model=llm_model(provider, settings),
                     usage=usage,
                     input_chars=chars,
                     semantics="LLM self-reported weights normalized to sum 1; uncalibrated.",
@@ -196,7 +244,7 @@ async def evaluate(
         key = settings.laya_api_key if provider == "laya" else settings.jev_api_key
         model = settings.laya_model if provider == "laya" else settings.jev_model
         if provider == "jev" and not key:
-            raise ProviderError("Set JEVLENS_JEV_API_KEY to use the hosted Jev provider.")
+            raise ProviderError("Set NOCAP_JEV_API_KEY to use the hosted Jev provider.")
         headers = {"Authorization": "Bearer " + key} if key else {}
         questions = QUESTIONS
         if provider == "laya" and settings.laya_balance_options:
@@ -255,9 +303,12 @@ async def evaluate(
         ) from exc
 
 
-async def generate(settings: Settings, question: str, evidence: list[Evidence]) -> GeneratedAnswer:
+async def generate(
+    settings: Settings, question: str, evidence: list[Evidence], backend: str = "ollama"
+) -> GeneratedAnswer:
     try:
-        result, _ = await ollama_chat(
+        result, _ = await llm_chat(
+            backend,
             settings,
             [
                 {
