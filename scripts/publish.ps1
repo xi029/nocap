@@ -1,4 +1,4 @@
-# Rename the existing GitHub repository to NoCap and refresh its metadata.
+﻿# Rename the existing GitHub repository to NoCap and refresh its metadata.
 # GitHub keeps redirects from the old name, so existing clones and links keep working.
 param(
     [string]$Old = 'xi029/jev-lens',
