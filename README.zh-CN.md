@@ -11,12 +11,14 @@
 
 <p align="center">
   <b>你的 RAG 在“吹牛”。🧢</b><br>
-  NoCap 在大模型开口<i>之前</i>，先判断检索到的证据到底能不能回答这个问题，<br>
+  NoCap 是一道 <b>System One</b> 证据关卡：由快速决策模型（<b>Jev</b>、<b>Laya</b> 或任意 LLM）<br>
+  在大模型开口<i>之前</i>，先判断检索到的证据到底能不能回答这个问题，<br>
   再决定：<b>回答</b>、<b>继续检索</b>、<b>拒答</b>，还是<b>标记冲突</b>。
 </p>
 
 <p align="center">
   <a href="README.md">English</a> ·
+  <a href="#-system-one-判断system-two-开口">System One</a> ·
   <a href="#-60-秒上手">快速开始</a> ·
   <a href="#-三种接入方式">SDK · MCP · HTTP</a> ·
   <a href="#-给幻觉写单元测试">CI</a> ·
@@ -62,6 +64,24 @@
 </tr>
 </table>
 
+## ⚡ System One 判断，System Two 开口
+
+卡尼曼把人的思考分成 *System 1*（快速、直觉的判断）和 *System 2*（缓慢、深思熟虑的推理）。最近出现的一类 **System One 模型**，比如 TypeSafe 的托管模型 [**Jev**](https://docs.typesafe.ai/introduction) 和开源权重的 [**Laya**](https://github.com/NandhaKishorM/laya)，根本不生成文本：你给它状态和类型化问题，它直接返回代码可用的概率分布。
+
+这正是 RAG 在生成之前最该问的问题：
+
+```text
+state:    { question, excerpts[] }
+question: choice → supported | partial | missing | conflicting
+answer:   { supported: 0.86, partial: 0.10, missing: 0.02, conflicting: 0.02 }
+```
+
+NoCap 把这个类型化问题发给任意 `/v1/systemone` 接口，按你的阈值把分布变成路由，然后才让 **System Two**（负责生成的大模型：更慢、更贵、更会说）开口。对 Laya 默认对四种标签顺序取平均，抵消一种已知的选项顺序偏差。手头没有 System One 模型？Ollama 或任意 OpenAI 兼容大模型也能当裁判，Schema、Trace 和回放完全一致。
+
+```python
+gate = Gate(provider="laya")  # 开源权重、本地运行；也可用 "jev"（托管）、"ollama"、"openai"
+```
+
 ## ✨ 功能一览
 
 | | 功能 | 价值 |
@@ -69,7 +89,7 @@
 | 🛡️ | **证据门控** | 四种路由：`answer` · `retrieve_more` · `abstain` · `review_conflict`。只有 `answer` 才会调用你的生成模型。 |
 | 🐍 | **3 行 Python SDK** | 用 `@gate.guard` 包住任意生成函数。支持字符串、dict、LangChain `Document` 和 LlamaIndex 节点。 |
 | 🤖 | **MCP Server** | 给 Claude Code、Cursor、Codex 等任意 MCP Agent 加上 `check_evidence` 工具。 |
-| 🔌 | **任意模型当裁判** | Ollama，任意 **OpenAI 兼容接口**（OpenAI、DeepSeek、通义千问、Kimi、vLLM、LM Studio…），开源 Laya，托管 Jev。 |
+| ⚡ | **System One 裁判** | 原生支持 `/v1/systemone`：开源权重 **Laya**、托管 **Jev**；也可用 Ollama 或任意 **OpenAI 兼容**大模型（OpenAI、DeepSeek、通义千问、Kimi、vLLM、LM Studio…）。 |
 | 🧪 | **给幻觉写单元测试** | `nocap eval` 跑带标注的路由用例，一旦出现**漏放**就让 CI 失败；也提供 GitHub Action。 |
 | ⏪ | **零成本策略回放** | 对已保存的判断改阈值，重新算路由，**不再调用任何模型**。 |
 | 🔍 | **可审计 Trace** | 送给模型的原始片段、概率分布、耗时和引用都导出为 JSON，并带永久链接。 |
@@ -176,10 +196,10 @@ nocap eval cases.jsonl --docs ./knowledge --provider ollama --max-leaks 0
 
 | Provider | 配置 | 分数含义 |
 | --- | --- | --- |
+| ⚡ `laya` | System One・开源权重：自部署 [Laya](https://github.com/NandhaKishorM/laya) `/v1/systemone`（`uv sync --extra laya`） | 选择头分布，默认对 4 种标签顺序取平均 |
+| ⚡ `jev` | System One・托管：[TypeSafe Jev](https://docs.typesafe.ai/introduction) API Key（`NOCAP_JEV_API_KEY`） | 托管决策分布 |
 | `ollama` | `ollama pull qwen3.5:4b`，选择 **Ollama · local** | 模型自报，归一化，未校准 |
 | `openai` | `NOCAP_OPENAI_URL`、`NOCAP_OPENAI_MODEL`、`NOCAP_OPENAI_API_KEY`；支持 OpenAI、DeepSeek、通义千问 DashScope、OpenRouter、vLLM、LM Studio | 模型自报，归一化，未校准 |
-| `laya` | 自部署 [Laya](https://github.com/NandhaKishorM/laya) `/v1/systemone` | 选择头分布，默认对 4 种标签顺序取平均 |
-| `jev` | [TypeSafe Jev](https://docs.typesafe.ai/introduction) API Key | 托管决策分布 |
 | `demo` | 无需配置 | 词法模拟，仅用于体验界面 |
 
 ```dotenv

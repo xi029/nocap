@@ -11,12 +11,14 @@
 
 <p align="center">
   <b>Your RAG is capping. 🧢</b><br>
-  NoCap checks whether the retrieved evidence actually answers the question <i>before</i> your LLM speaks,<br>
+  NoCap is a <b>System One</b> evidence gate. A fast decision model (<b>Jev</b>, <b>Laya</b> or any LLM) checks<br>
+  whether the retrieved evidence actually answers the question <i>before</i> your LLM speaks,<br>
   then routes to <b>answer</b>, <b>retrieve more</b>, <b>abstain</b>, or <b>review a conflict</b>.
 </p>
 
 <p align="center">
   <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="#-system-one-judges-system-two-speaks">System One</a> ·
   <a href="#-60-second-quickstart">Quickstart</a> ·
   <a href="#-three-ways-to-plug-it-in">SDK · MCP · HTTP</a> ·
   <a href="#-ci-for-hallucinations">CI</a> ·
@@ -62,6 +64,24 @@ Q: How many days do I have for a refund?
 </tr>
 </table>
 
+## ⚡ System One judges, System Two speaks
+
+Kahneman's *System 1* is fast, intuitive judgment; *System 2* is slow, deliberate reasoning. A new class of **System One models**, such as TypeSafe's hosted [**Jev**](https://docs.typesafe.ai/introduction) and the open-weight [**Laya**](https://github.com/NandhaKishorM/laya), don't write text at all. You send them state plus typed questions, and they return a probability distribution your code can act on.
+
+That is exactly the question a RAG pipeline should ask before it generates:
+
+```text
+state:    { question, excerpts[] }
+question: choice → supported | partial | missing | conflicting
+answer:   { supported: 0.86, partial: 0.10, missing: 0.02, conflicting: 0.02 }
+```
+
+NoCap sends that typed question to any `/v1/systemone` endpoint, turns the distribution into a route with your thresholds, and only then lets your **System Two** (the generator LLM: slower, pricier, eloquent) speak. For Laya it averages four label rotations by default, to cancel one known source of option-order bias. No System One model at hand? Ollama or any OpenAI-compatible LLM can play the judge with the same schema, traces and replay.
+
+```python
+gate = Gate(provider="laya")  # open weights, local · or "jev" (hosted), "ollama", "openai"
+```
+
 ## ✨ What you get
 
 | | Feature | Why it matters |
@@ -69,7 +89,7 @@ Q: How many days do I have for a refund?
 | 🛡️ | **Evidence gate** | Four routes: `answer` · `retrieve_more` · `abstain` · `review_conflict`. Your generator runs only on `answer`. |
 | 🐍 | **3-line Python SDK** | `@gate.guard` wraps any generator. Accepts strings, dicts, LangChain `Document`s and LlamaIndex nodes. |
 | 🤖 | **MCP server** | Give Claude Code, Cursor, Codex or any MCP agent a `check_evidence` tool. |
-| 🔌 | **Any model as the judge** | Ollama, any **OpenAI-compatible** API (OpenAI, DeepSeek, Qwen, vLLM, LM Studio…), open-weight Laya, hosted Jev. |
+| ⚡ | **System One judges** | Native `/v1/systemone` support for open-weight **Laya** and hosted **Jev**, or use Ollama / any **OpenAI-compatible** LLM (OpenAI, DeepSeek, Qwen, vLLM, LM Studio…). |
 | 🧪 | **CI for hallucinations** | `nocap eval` runs labelled route tests and fails the build on **leaks**. Also available as a GitHub Action. |
 | ⏪ | **Zero-cost policy replay** | Change thresholds on a saved decision and re-route it with **0 model calls**. |
 | 🔍 | **Inspectable traces** | Exact excerpts sent, the distribution, timings and citations, as JSON with a permalink. |
@@ -176,10 +196,10 @@ A **leak** means the gate allowed an answer it should have blocked. An **over-re
 
 | Provider | Setup | Score meaning |
 | --- | --- | --- |
+| ⚡ `laya` | System One, open weights: self-hosted [Laya](https://github.com/NandhaKishorM/laya) `/v1/systemone` (`uv sync --extra laya`) | Choice-head distribution, averaged over 4 label rotations |
+| ⚡ `jev` | System One, hosted: [TypeSafe Jev](https://docs.typesafe.ai/introduction) API key (`NOCAP_JEV_API_KEY`) | Hosted decision distribution |
 | `ollama` | `ollama pull qwen3.5:4b` and choose **Ollama · local** | Self-reported, normalized, uncalibrated |
 | `openai` | `NOCAP_OPENAI_URL`, `NOCAP_OPENAI_MODEL`, `NOCAP_OPENAI_API_KEY`. Works with OpenAI, DeepSeek, Qwen/DashScope, OpenRouter, vLLM, LM Studio | Self-reported, normalized, uncalibrated |
-| `laya` | Self-hosted [Laya](https://github.com/NandhaKishorM/laya) `/v1/systemone` | Choice-head distribution, averaged over 4 label rotations |
-| `jev` | [TypeSafe Jev](https://docs.typesafe.ai/introduction) API key | Hosted decision distribution |
 | `demo` | Nothing | Lexical simulation for exploring the UI |
 
 ```dotenv

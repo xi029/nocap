@@ -5,8 +5,8 @@ Maintainer checklist and drafts. Nothing here has been posted anywhere.
 ## 1. Repository
 
 - Rename `xi029/jev-lens` → **`xi029/nocap`** with `./scripts/publish.ps1`. GitHub keeps redirects from the old URL. The script also sets the description, homepage and topics.
-- Description: `No evidence, no answer. 🧢 The hallucination firewall for RAG & AI agents: MCP server, Python SDK, OpenAI-compatible / Ollama judges, CI route tests.`
-- Topics: `rag` `hallucination` `llm` `mcp` `mcp-server` `ai-agents` `guardrails` `ollama` `openai` `deepseek` `langchain` `llamaindex` `claude-code` `local-first` `python` `evaluation`
+- Description: `No evidence, no answer. 🧢 System One evidence gate for RAG & AI agents: Jev / Laya / any LLM judges before your LLM speaks. MCP server, Python SDK, CI route tests.`
+- Topics: `system-one` `jev` `laya` `rag` `hallucination` `llm` `mcp` `mcp-server` `ai-agents` `guardrails` `ollama` `openai` `deepseek` `langchain` `llamaindex` `claude-code` `local-first` `python` `evaluation`
 - Social preview: upload `docs/assets/social-preview.png` (1280×640) in **Settings → General → Social preview**.
 - Pin the repository on your profile.
 
@@ -40,7 +40,7 @@ A 20-second GIF/MP4 usually beats any screenshot. Suggested shot list:
 
 > Your RAG is capping. 🧢
 >
-> I built NoCap: a gate that asks "do these chunks actually answer the question?" *before* your LLM speaks, then routes to answer / retrieve more / abstain / flag conflict.
+> I built NoCap, a System One gate (Jev / Laya / any LLM as the judge) that asks "do these chunks actually answer the question?" *before* your LLM speaks, then routes to answer / retrieve more / abstain / flag conflict.
 >
 > - 3-line Python SDK
 > - MCP server for Claude Code & Cursor
@@ -58,7 +58,7 @@ A 20-second GIF/MP4 usually beats any screenshot. Suggested shot list:
 **V2EX / 掘金 / 知乎（中文）**
 
 > 做 RAG 最怕的不是检索不到，而是检索到“沾边”的内容后模型开始一本正经地编。
-> 我做了个开源小工具 **NoCap**（No cap = 不吹牛）：在大模型生成之前，先让裁判模型判断证据是“支持 / 部分 / 缺失 / 冲突”，再按你设的阈值决定回答、继续检索、拒答或提示冲突。
+> 我做了个开源小工具 **NoCap**（No cap = 不吹牛）：借最近很火的 System One 思路（Jev / Laya 这类只做判断、不写文字的决策模型），在大模型生成之前，先让裁判模型判断证据是“支持 / 部分 / 缺失 / 冲突”，再按你设的阈值决定回答、继续检索、拒答或提示冲突。
 > 支持 Ollama、DeepSeek、通义千问等任意 OpenAI 兼容接口；有 Python SDK（3 行接入）、MCP Server（Claude Code / Cursor 直接用），还能用 `nocap eval` 在 CI 里给“幻觉”写单元测试。
 > 本地优先，Apache-2.0：github.com/xi029/nocap
 

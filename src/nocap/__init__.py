@@ -1,4 +1,4 @@
-"""NoCap: the hallucination firewall for RAG and AI agents. No evidence, no answer."""
+"""NoCap: a System One evidence gate for RAG and AI agents. No evidence, no answer."""
 
 __version__ = "0.2.0"
 

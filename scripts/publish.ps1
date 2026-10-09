@@ -24,10 +24,10 @@ if ($LASTEXITCODE -ne 0) {
 git remote set-url origin "https://github.com/$owner/$New.git"
 git push origin HEAD
 gh repo edit "$owner/$New" `
-    --description 'No evidence, no answer. 🧢 The hallucination firewall for RAG & AI agents: MCP server, Python SDK, OpenAI-compatible / Ollama judges, CI route tests.' `
+    --description 'No evidence, no answer. 🧢 System One evidence gate for RAG & AI agents: Jev / Laya / any LLM judges before your LLM speaks. MCP server, Python SDK, CI route tests.' `
     --homepage "https://github.com/$owner/$New#readme"
 gh api -X PUT "repos/$owner/$New/topics" `
-    -f 'names[]=rag' -f 'names[]=hallucination' -f 'names[]=llm' -f 'names[]=mcp' `
+    -f 'names[]=system-one' -f 'names[]=jev' -f 'names[]=laya' -f 'names[]=rag' -f 'names[]=hallucination' -f 'names[]=llm' -f 'names[]=mcp' `
     -f 'names[]=mcp-server' -f 'names[]=ai-agents' -f 'names[]=guardrails' -f 'names[]=ollama' `
     -f 'names[]=openai' -f 'names[]=deepseek' -f 'names[]=langchain' -f 'names[]=llamaindex' `
     -f 'names[]=claude-code' -f 'names[]=local-first' -f 'names[]=python' -f 'names[]=evaluation'

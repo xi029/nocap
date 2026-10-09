@@ -4,7 +4,7 @@
   height="520"
   viewBox="0 0 1400 520"
   role="img"
-  aria-label="NoCap: no evidence, no answer. The hallucination firewall for RAG and AI agents. Without NoCap the bot invents a 90-day refund window; with NoCap the conflict between two sources is flagged and the LLM is not called."
+  aria-label="NoCap: no evidence, no answer. The hallucination firewall for RAG and AI agents, judged by System One models such as Jev and Laya. Without NoCap the bot invents a 90-day refund window; with NoCap the conflict between two sources is flagged and the LLM is not called."
 >
   <defs>
     <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
@@ -60,12 +60,12 @@
     <g font-size="13" font-weight="600" fill="#c9d8cd">
       <rect x="72" y="428" width="68" height="32" rx="16" fill="#18221c" stroke="#36503f" />
       <text x="90" y="449">MCP</text>
-      <rect x="150" y="428" width="164" height="32" rx="16" fill="#18221c" stroke="#36503f" />
-      <text x="168" y="449">OpenAI-compatible</text>
-      <rect x="324" y="428" width="86" height="32" rx="16" fill="#18221c" stroke="#36503f" />
-      <text x="342" y="449">Ollama</text>
-      <rect x="420" y="428" width="196" height="32" rx="16" fill="#18221c" stroke="#36503f" />
-      <text x="438" y="449">LangChain · LlamaIndex</text>
+      <rect x="150" y="428" width="218" height="32" rx="16" fill="#15342c" stroke="#8ae4b6" />
+      <text x="168" y="449" fill="#8ae4b6">⚡ System One · Jev / Laya</text>
+      <rect x="378" y="428" width="86" height="32" rx="16" fill="#18221c" stroke="#36503f" />
+      <text x="396" y="449">Ollama</text>
+      <rect x="474" y="428" width="164" height="32" rx="16" fill="#18221c" stroke="#36503f" />
+      <text x="492" y="449">OpenAI-compatible</text>
     </g>
   </g>
 

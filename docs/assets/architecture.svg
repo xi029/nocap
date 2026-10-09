@@ -67,7 +67,7 @@
         <text x="352" y="214" fill="#e8eee9">.02</text>
       </g>
       <path d="M28 240H372" stroke="#2f4236" />
-      <text x="28" y="268" fill="#a9b8ad" font-size="13">Judge: Ollama · any OpenAI-compatible API · Laya · Jev</text>
+      <text x="28" y="268" fill="#a9b8ad" font-size="13">Judge: System One (Jev · Laya) · Ollama · OpenAI-compatible</text>
       <text x="28" y="292" fill="#a9b8ad" font-size="13">Policy: support ≥ 70% · conflict ≥ 35% (yours to tune)</text>
     </g>
 

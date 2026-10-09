@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "nocap-ai"
 version = "0.2.0"
-description = "No evidence, no answer. The hallucination firewall for RAG and AI agents: an evidence gate with MCP server, Python SDK, OpenAI-compatible/Ollama judges and CI route tests."
+description = "No evidence, no answer. A System One evidence gate for RAG and AI agents: Jev / Laya / any LLM judges the evidence before your LLM speaks. MCP server, Python SDK, CI route tests."
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
@@ -16,7 +16,7 @@ classifiers = [
 ]
 license = "Apache-2.0"
 authors = [{name = "xi029"}]
-keywords = ["rag", "hallucination", "llm", "guardrails", "mcp", "mcp-server", "ai-agents", "ollama", "openai", "deepseek", "langchain", "llamaindex", "evaluation", "local-first"]
+keywords = ["system-one", "jev", "laya", "decision-model", "rag", "hallucination", "llm", "guardrails", "mcp", "mcp-server", "ai-agents", "ollama", "openai", "deepseek", "langchain", "llamaindex", "evaluation", "local-first"]
 dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "httpx>=0.28,<1", "pydantic-settings>=2.7,<3", "python-multipart>=0.0.20,<1"]
 
 [project.optional-dependencies]
