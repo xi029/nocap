@@ -12,7 +12,7 @@ Maintainer checklist and drafts. Nothing here has been posted anywhere.
 
 ## 2. Package and release
 
-`pip install nocap`, `uvx --from "nocap[mcp]"` and the README's PyPI badge only work after the package is on PyPI. The name `nocap` was free on 2026-10-09.
+`pip install nocap-ai`, `uvx --from "nocap-ai[mcp]"` and the README's PyPI badge only work after the package is on PyPI. PyPI rejected `nocap` as too similar to an existing project, so the distribution is `nocap-ai`; the import name and CLI stay `nocap`.
 
 ```sh
 uv build

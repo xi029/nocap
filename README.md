@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/xi029/nocap/actions/workflows/ci.yml"><img src="https://github.com/xi029/nocap/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pypi.org/project/nocap/"><img src="https://img.shields.io/pypi/v/nocap?color=8ae4b6&labelColor=202c24" alt="PyPI"></a>
+  <a href="https://pypi.org/project/nocap-ai/"><img src="https://img.shields.io/pypi/v/nocap-ai?color=8ae4b6&labelColor=202c24" alt="PyPI"></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-8ae4b6?labelColor=202c24" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/MCP-server-8ae4b6?labelColor=202c24" alt="MCP server">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-8ae4b6?labelColor=202c24" alt="Apache-2.0"></a>
@@ -78,7 +78,7 @@ Q: How many days do I have for a refund?
 ## 🚀 60-second quickstart
 
 ```sh
-pip install nocap
+pip install nocap-ai
 nocap demo     # load fictional sample docs
 nocap serve    # open http://127.0.0.1:8787
 ```
@@ -118,7 +118,7 @@ Need the details? `verdict = gate.check(question, docs)` gives you `verdict.acti
 ### 2. MCP: make your agent show its receipts
 
 ```sh
-claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap[mcp]" nocap mcp
+claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap-ai[mcp]" nocap mcp
 ```
 
 ![Claude Code, Cursor, Codex and other MCP clients call check_evidence and follow next_step](docs/assets/mcp.svg)

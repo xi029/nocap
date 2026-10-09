@@ -4,7 +4,7 @@
 
 Agents read files, search results and tool output, then answer with total confidence. `nocap mcp` gives any [Model Context Protocol](https://modelcontextprotocol.io) client an evidence gate. The agent sends the question and the excerpts it plans to rely on; NoCap returns a route and a plain-language `next_step` the agent should follow.
 
-The server uses stdio and needs the optional extra: `pip install "nocap[mcp]"`. The examples below use [`uvx`](https://docs.astral.sh/uv/), which downloads and runs it on demand.
+The server uses stdio and needs the optional extra: `pip install "nocap-ai[mcp]"`. The examples below use [`uvx`](https://docs.astral.sh/uv/), which downloads and runs it on demand.
 
 ## Tools
 
@@ -24,7 +24,7 @@ Set `NOCAP_PROVIDER` to the judge you want (`ollama`, `openai`, `laya`, `jev`; `
 ### Claude Code
 
 ```sh
-claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap[mcp]" nocap mcp
+claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap-ai[mcp]" nocap mcp
 ```
 
 ### Cursor / Claude Desktop / Windsurf
@@ -36,7 +36,7 @@ claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap[mcp]" nocap m
   "mcpServers": {
     "nocap": {
       "command": "uvx",
-      "args": ["--from", "nocap[mcp]", "nocap", "mcp"],
+      "args": ["--from", "nocap-ai[mcp]", "nocap", "mcp"],
       "env": { "NOCAP_PROVIDER": "ollama", "NOCAP_DATA_DIR": "/absolute/path/to/nocap-data" }
     }
   }
@@ -50,7 +50,7 @@ claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap[mcp]" nocap m
 ```toml
 [mcp_servers.nocap]
 command = "uvx"
-args = ["--from", "nocap[mcp]", "nocap", "mcp"]
+args = ["--from", "nocap-ai[mcp]", "nocap", "mcp"]
 env = { NOCAP_PROVIDER = "ollama" }
 ```
 

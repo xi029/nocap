@@ -6,7 +6,7 @@ NoCap can be a standalone workbench or an evidence gate inside an application. T
 
 ## Python SDK (recommended)
 
-`pip install nocap` gives you an in-process gate. No server needs to run.
+`pip install nocap-ai` gives you an in-process gate. No server needs to run.
 
 ```python
 from nocap import Gate

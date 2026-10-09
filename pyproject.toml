@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "nocap"
+name = "nocap-ai"
 version = "0.2.0"
 description = "No evidence, no answer. The hallucination firewall for RAG and AI agents: an evidence gate with MCP server, Python SDK, OpenAI-compatible/Ollama judges and CI route tests."
 readme = "README.md"

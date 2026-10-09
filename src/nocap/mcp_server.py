@@ -1,6 +1,6 @@
 """MCP server: give Claude Code, Cursor, Codex and any MCP agent a "no evidence, no answer" tool.
 
-Run with ``nocap mcp`` (stdio). Requires the optional extra: ``pip install "nocap[mcp]"``.
+Run with ``nocap mcp`` (stdio). Requires the optional extra: ``pip install "nocap-ai[mcp]"``.
 """
 
 from pydantic import BaseModel, Field
@@ -127,5 +127,5 @@ def main():
     try:
         server = create_server()
     except ImportError as exc:
-        raise SystemExit('The MCP server needs the extra: pip install "nocap[mcp]"') from exc
+        raise SystemExit('The MCP server needs the extra: pip install "nocap-ai[mcp]"') from exc
     server.run("stdio")

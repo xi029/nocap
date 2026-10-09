@@ -31,7 +31,7 @@ runs:
         python-version: "3.12"
     - shell: bash
       run: |
-        if [ -n "${{ inputs.version }}" ]; then pip install "nocap==${{ inputs.version }}"; else pip install "${{ github.action_path }}"; fi
+        if [ -n "${{ inputs.version }}" ]; then pip install "nocap-ai==${{ inputs.version }}"; else pip install "${{ github.action_path }}"; fi
     - shell: bash
       run: |
         args=("${{ inputs.cases }}" --provider "${{ inputs.provider }}" --max-leaks "${{ inputs.max-leaks }}" --min-accuracy "${{ inputs.min-accuracy }}" --output nocap-report.json)

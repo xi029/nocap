@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/xi029/nocap/actions/workflows/ci.yml"><img src="https://github.com/xi029/nocap/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pypi.org/project/nocap/"><img src="https://img.shields.io/pypi/v/nocap?color=8ae4b6&labelColor=202c24" alt="PyPI"></a>
+  <a href="https://pypi.org/project/nocap-ai/"><img src="https://img.shields.io/pypi/v/nocap-ai?color=8ae4b6&labelColor=202c24" alt="PyPI"></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-8ae4b6?labelColor=202c24" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/MCP-server-8ae4b6?labelColor=202c24" alt="MCP server">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-8ae4b6?labelColor=202c24" alt="Apache-2.0"></a>
@@ -78,7 +78,7 @@
 ## 🚀 60 秒上手
 
 ```sh
-pip install nocap
+pip install nocap-ai
 nocap demo     # 载入虚构示例文档
 nocap serve    # 打开 http://127.0.0.1:8787
 ```
@@ -118,7 +118,7 @@ answer("怎么申请退款？", retriever.invoke("怎么申请退款？"))
 ### 2. MCP：让你的 Agent “拿出证据”
 
 ```sh
-claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap[mcp]" nocap mcp
+claude mcp add nocap -e NOCAP_PROVIDER=ollama -- uvx --from "nocap-ai[mcp]" nocap mcp
 ```
 
 ![Claude Code、Cursor、Codex 等 MCP 客户端调用 check_evidence 并遵循 next_step](docs/assets/mcp.svg)
